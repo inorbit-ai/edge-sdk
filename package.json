@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "description": "InOrbit Cloud SDK",
   "main": "dist/index.js",
+  "browser": "./lib/index.js",
+  "module": "./module/index.js",
   "scripts": {
-    "build": "babel src --out-file dist/index.js --minified --source-maps --ignore 'src/**/*.test.js' --ignore 'src/**/*.example.js'",
-    "start": "babel-node src/example.js"
+    "build": "babel src --out-file dist/index.js --minified --source-maps --ignore 'src/**/*.test.js'",
+    "start": "babel-node example.js"
   },
   "dependencies": {
     "async-mqtt": "^2.6.1",

@@ -1,3 +1,10 @@
+/**
+ * InOrbit Cloud SDK Example showing how to send data belonging to various robots
+ * to the InOrbit Platform.
+ * 
+ * Copyright 2021 InOrbit, Inc.
+ */
+
 import CloudSDK from './src';
 
 function sleep(ms) {
@@ -13,7 +20,6 @@ async function main() {
   await Promise.all(robots.map(robotId => sdk.connectRobot({ robotId })));
 
   while (true) {
-
     // Publish Key-Values with battery and status values
     await Promise.all(robots.map(robotId => sdk.publishCustomDataKV(robotId, {
       battery: Math.random() * 100,

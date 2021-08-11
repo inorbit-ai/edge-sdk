@@ -1,3 +1,10 @@
+/**
+ * InOrbit Cloud SDK Example showing how to send data belonging to one robot
+ * to the InOrbit Platform.
+ * 
+ * Copyright 2021 InOrbit, Inc.
+ */
+
 // Import the CloudSDK
 import CloudSDK from './src';
 

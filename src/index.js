@@ -10,6 +10,7 @@ import mqtt from 'async-mqtt';
 import messages from './inorbit_pb';
 
 const CLOUD_SDK_VERSION = '0.1.0';
+const INORBIT_ENDPOINT_DEFAULT = 'https://control.inorbit.ai/mqtt_config';
 // Agent version reported when a robot connection is open using this SDK
 const AGENT_VERSION = `${CLOUD_SDK_VERSION}.cloudsdk`;
 
@@ -315,7 +316,7 @@ class RobotSessionPool {
   }
 }
 
-class DummyLogger {
+export class Logger {
   info() { }
   warn() { }
   error() { }
@@ -325,22 +326,38 @@ export default class CloudSDK {
   #sessionsPool;
   #explicitConnect;
 
+  /**
+   * Initializes the CloudSDK
+   * 
+   * @typedef Logger
+   * @property 
+   * 
+   * @typedef Settings
+   * @property {string} appKey The account's app key. Used for authentication.
+   * @property {string} endpoint InOrbit endpoint URL. Default to https://api.inorbit.ai
+   * @property {Logger} logger By default a no-op logger is used
+   * 
+   * @param {Settings} settings 
+   */
   constructor(settings = {}) {
     const appKey = settings.appKey;
     if (!appKey) {
       throw Error('CloudSDK expects appKey as part of the settings');
     }
-    const endpoint = settings.endpoint || 'https://api.inorbit.ai';
-    const logger = settings.logger || new DummyLogger();
+    const endpoint = settings.endpoint || INORBIT_ENDPOINT_DEFAULT;
+    const logger = settings.logger || new Logger();
     const sessionsFactory = new RobotSessionFactory({ appKey, endpoint, logger });
     this.#sessionsPool = new RobotSessionPool(sessionsFactory);
     this.#explicitConnect = settings.explicitConnect === false ? false : true;
   }
 
   /**
-   * @returns Promise<RobotSession>
+   * Opens a connection associated to a robot and returns the session object.
+   * 
+   * @see connectRobot
+   * @returns RobotSession
    */
-  async getRobotSession({ robotId, name = 'cloud-sdk' }) {
+  async #getRobotSession({ robotId, name = 'cloud-sdk' }) {
     if (this.#explicitConnect && !this.#sessionsPool.hasRobot(robotId)) {
       throw new Error('Can\'t get robot session or send data before connecting. Use connectRobot before sending any data');
     }
@@ -355,10 +372,24 @@ export default class CloudSDK {
     this.sessionsPool.tearDown();
   }
 
+  /**
+   * Marks a robot as online and initializes the connection. If a connection
+   * is already open, it's reused. So, invoking this method multiple times for
+   * the same robot will create just one connection.
+   * 
+   * @param {string} robotId
+   * @param {string} name Name of the robot. This name will be used as the robot's
+   * name if it's the first time it connects to the platform.
+   */
   async connectRobot({ robotId, name = 'cloud-sdk' }) {
     await this.#sessionsPool.getSession({ robotId, name });
   }
 
+  /**
+   * Marks a robot as offline and frees the connection.
+   * 
+   * @param {string} robotId
+   */
   async disconnectRobot(robotId) {
     await this.#sessionsPool.freeRobotSession(robotId);
   }
@@ -371,7 +402,7 @@ export default class CloudSDK {
    * @param {string} customField Custom field name
    */
   async publishCustomDataKV(robotId, keyValues, customField = '0') {
-    const sess = await this.getRobotSession({ robotId });
+    const sess = await this.#getRobotSession({ robotId });
     return sess.publishCustomDataKV(keyValues, customField);
   }
 
@@ -386,7 +417,7 @@ export default class CloudSDK {
    * @param {string} frameId Robot's reference frame id
    */
   async publishPose(robotId, { ts, x, y, yaw, frameId }) {
-    const sess = await this.getRobotSession({ robotId });
+    const sess = await this.#getRobotSession({ robotId });
     return sess.publishPose({ ts, x, y, yaw, frameId });
   }
 
@@ -411,7 +442,7 @@ export default class CloudSDK {
     ts,
     distance = { linear: 0, angular: 0 },
     speed = { linear: 0, angular: 0 } }) {
-    const sess = await this.getRobotSession({ robotId });
+    const sess = await this.#getRobotSession({ robotId });
     return sess.publishOdometry({
       tsStart,
       ts,

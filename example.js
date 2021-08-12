@@ -5,8 +5,8 @@
  * Copyright 2021 InOrbit, Inc.
  */
 
-// Import the CloudSDK
-import CloudSDK from './src';
+// Import InOrbit
+import InOrbit from './src';
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -15,8 +15,8 @@ function sleep(ms) {
 async function main() {
   const robotId = 'xxxx';
 
-  // Initialize the CloudSDK 
-  const sdk = new CloudSDK({
+  // Initialize InOrbit 
+  const sdk = new InOrbit({
     appKey: process.env['INORBIT_APP_KEY'],
     // Include logging to the console
     logger: {

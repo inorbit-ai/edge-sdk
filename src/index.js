@@ -322,12 +322,12 @@ export class Logger {
   error() { }
 }
 
-export default class CloudSDK {
+export default class InOrbit {
   #sessionsPool;
   #explicitConnect;
 
   /**
-   * Initializes the CloudSDK
+   * Initializes the InOrbit
    * 
    * @typedef Logger
    * @property 
@@ -342,7 +342,7 @@ export default class CloudSDK {
   constructor(settings = {}) {
     const appKey = settings.appKey;
     if (!appKey) {
-      throw Error('CloudSDK expects appKey as part of the settings');
+      throw Error('InOrbit expects appKey as part of the settings');
     }
     const endpoint = settings.endpoint || INORBIT_ENDPOINT_DEFAULT;
     const logger = settings.logger || new Logger();
@@ -366,7 +366,7 @@ export default class CloudSDK {
   }
 
   /**
-   * Frees all resources and connections used by this CloudSDK object
+   * Frees all resources and connections used by this InOrbit object
    */
   tearDown() {
     this.sessionsPool.tearDown();

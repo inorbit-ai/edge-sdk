@@ -5,7 +5,7 @@
  * Copyright 2021 InOrbit, Inc.
  */
 
-import CloudSDK from './src';
+import InOrbit from './src';
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -14,7 +14,7 @@ function sleep(ms) {
 async function main() {
   const robots = [ 'robot0', 'robot1', 'robot2', 'robot3' ];
 
-  const sdk = new CloudSDK({ appKey: process.env['INORBIT_APP_KEY'] });
+  const sdk = new InOrbit({ appKey: process.env['INORBIT_APP_KEY'] });
 
   // Initialize the connection for each robot
   await Promise.all(robots.map(robotId => sdk.connectRobot({ robotId })));

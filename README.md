@@ -1,7 +1,7 @@
 InOrbit Cloud SDK
 ---
 
-The InOrbit Cloud SDK allows Javascript programs to communicate with the **InOrbit Platform**
+The InOrbit Cloud SDK allows Javascript programs to communicate with the **InOrbit platform**
 on behalf of robots - providing robot data and handling robot actions.
 It's goal is to ease the integration between InOrbit and any other software that 
 handles robot data.
@@ -10,7 +10,7 @@ The following example shows how this package can be used to send data belonging
 to various robots to InOrbit:
 
 ```javascript
-import CloudSDK from './src';
+import InOrbit from './src';
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -19,7 +19,7 @@ function sleep(ms) {
 async function main() {
   const robots = [ 'robot0', 'robot1', 'robot2', 'robot3' ];
 
-  const sdk = new CloudSDK({ appKey: process.env['INORBIT_APP_KEY'] });
+  const sdk = new InOrbit({ appKey: process.env['INORBIT_APP_KEY'] });
 
   // Initialize the connection for each robot
   await Promise.all(robots.map(robotId => sdk.connectRobot({ robotId })));

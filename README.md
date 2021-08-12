@@ -1,7 +1,8 @@
 InOrbit Cloud SDK
 ---
 
-The InOrbit Cloud SDK allows Javascript programs to communicate with the **InOrbit Platform**.
+The InOrbit Cloud SDK allows Javascript programs to communicate with the **InOrbit Platform**
+on behalf of robots - providing robot data and handling robot actions.
 It's goal is to ease the integration between InOrbit and any other software that 
 handles robot data.
 
@@ -48,7 +49,7 @@ main();
 ```
 
 The code publishes generated data about four robots to InOrbit. The data is then
-available in the InOrbit Platform and can be queried via APIs or using the InOrbit Control app.
+available in the InOrbit platform and can be queried via APIs or using the InOrbit Control application.
 
 You can extend this example to actually integrate your existing applications, including fleet manager systems,
 with InOrbit.

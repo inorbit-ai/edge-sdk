@@ -32,7 +32,7 @@ class RobotSession {
    * before publishing any message.
    *
    * @typedef {Settings}
-   * @property {string} appKey Company app key
+   * @property {string} appKey
    * @property {string} endpoint URL of the HTTP endpoint to fetch
    * robots settings.
    *
@@ -78,14 +78,14 @@ class RobotSession {
    */
   async connect() {
     const mqttConfig = await this.fetchRobotConfig();
-    const { protocol, hostname, port, username, password, companyApiKey } = mqttConfig;
+    const { protocol, hostname, port, username, password, robotApiKey } = mqttConfig;
 
     this.mqtt = await mqtt.connect(protocol + hostname + ':' + port, {
       username,
       password,
       will: {
         topic: `r/${this.robotId}/state`,
-        payload: `0|${companyApiKey}`,
+        payload: `0|${robotApiKey}`,
         qos: 1,
         retain: true
       }
@@ -96,8 +96,8 @@ class RobotSession {
       this.mqtt.end();
     }
     // TODO(mike) handle errors
-    this.companyApiKey = companyApiKey;
-    return this.publish('state', `1|${companyApiKey}|${this.agentVersion}|${this.name}`, { qos: 1, retain: true });
+    this.robotApiKey = robotApiKey;
+    return this.publish('state', `1|${robotApiKey}|${this.agentVersion}|${this.name}`, { qos: 1, retain: true });
   }
 
   /**
@@ -107,7 +107,7 @@ class RobotSession {
     // Before ending the session, update robot state explicitly as the `will` configured
     // on the mqtt `connect` method is trigged only if the "client disconnect badly"
     this.logger.info(`Setting robot ${this.robotId} state as offline`);
-    this.publish('state', `0|${this.companyApiKey}|${this.agentVersion}|${this.name}`, { qos: 1, retain: true });
+    this.publish('state', `0|${this.robotApiKey}|${this.agentVersion}|${this.name}`, { qos: 1, retain: true });
     this.ended = true;
     this.mqtt && this.mqtt.end();
   }

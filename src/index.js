@@ -10,7 +10,7 @@ import mqtt from 'async-mqtt';
 import messages from './inorbit_pb';
 
 const CLOUD_SDK_VERSION = '0.1.0';
-const INORBIT_ENDPOINT_DEFAULT = 'https://control.inorbit.ai/mqtt_config';
+const INORBIT_ENDPOINT_DEFAULT = 'https://control.inorbit.ai/cloud_sdk_robot_config';
 // Agent version reported when a robot connection is open using this SDK
 const AGENT_VERSION = `${CLOUD_SDK_VERSION}.cloudsdk`;
 
@@ -59,7 +59,7 @@ class RobotSession {
     this.logger.info(`Fetching config for robot ${this.robotId} for appKey ${this.appKey.substr(0, 3)}...`);
 
     const params = {
-      apiKey: this.appKey,
+      appKey: this.appKey,
       robotId: this.robotId,
       hostname: this.name,
       agentVersion: this.agentVersion
@@ -78,13 +78,14 @@ class RobotSession {
    */
   async connect() {
     const mqttConfig = await this.fetchRobotConfig();
-    const { protocol, hostname, port, username, password } = mqttConfig;
+    const { protocol, hostname, port, username, password, companyApiKey } = mqttConfig;
+
     this.mqtt = await mqtt.connect(protocol + hostname + ':' + port, {
       username,
       password,
       will: {
         topic: `r/${this.robotId}/state`,
-        payload: `0|${this.appKey}`,
+        payload: `0|${companyApiKey}`,
         qos: 1,
         retain: true
       }
@@ -95,7 +96,8 @@ class RobotSession {
       this.mqtt.end();
     }
     // TODO(mike) handle errors
-    return this.publish('state', `1|${this.appKey}|${this.agentVersion}|${this.name}`, { qos: 1, retain: true });
+    this.companyApiKey = companyApiKey;
+    return this.publish('state', `1|${companyApiKey}|${this.agentVersion}|${this.name}`, { qos: 1, retain: true });
   }
 
   /**
@@ -105,7 +107,7 @@ class RobotSession {
     // Before ending the session, update robot state explicitly as the `will` configured
     // on the mqtt `connect` method is trigged only if the "client disconnect badly"
     this.logger.info(`Setting robot ${this.robotId} state as offline`);
-    this.publish('state', `0|${this.appKey}|${this.agentVersion}|${this.name}`, { qos: 1, retain: true });
+    this.publish('state', `0|${this.companyApiKey}|${this.agentVersion}|${this.name}`, { qos: 1, retain: true });
     this.ended = true;
     this.mqtt && this.mqtt.end();
   }

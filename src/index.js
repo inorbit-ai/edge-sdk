@@ -340,12 +340,10 @@ export default class InOrbit {
    * @param {Settings} settings 
    */
   constructor(settings = {}) {
-    const appKey = settings.appKey;
+    const { appKey, endpoint = INORBIT_ENDPOINT_DEFAULT, logger = new Logger() } = settings;
     if (!appKey) {
       throw Error('InOrbit expects appKey as part of the settings');
     }
-    const endpoint = settings.endpoint || INORBIT_ENDPOINT_DEFAULT;
-    const logger = settings.logger || new Logger();
     const sessionsFactory = new RobotSessionFactory({ appKey, endpoint, logger });
     this.#sessionsPool = new RobotSessionPool(sessionsFactory);
     this.#explicitConnect = settings.explicitConnect === false ? false : true;

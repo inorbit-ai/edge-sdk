@@ -380,6 +380,8 @@ export default class InOrbit {
    * name if it's the first time it connects to the platform.
    */
   async connectRobot({ robotId, name = 'cloud-sdk' }) {
+    // Await fo the session creation. This assures that we have a valid connection
+    // to the robot
     await this.#sessionsPool.getSession({ robotId, name });
   }
 

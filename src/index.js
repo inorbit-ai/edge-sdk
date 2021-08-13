@@ -342,12 +342,10 @@ export default class InOrbit {
    * @param {Settings} settings 
    */
   constructor(settings = {}) {
-    const appKey = settings.appKey;
+    const { appKey, endpoint = INORBIT_ENDPOINT_DEFAULT, logger = new Logger() } = settings;
     if (!appKey) {
       throw Error('InOrbit expects appKey as part of the settings');
     }
-    const endpoint = settings.endpoint || INORBIT_ENDPOINT_DEFAULT;
-    const logger = settings.logger || new Logger();
     const sessionsFactory = new RobotSessionFactory({ appKey, endpoint, logger });
     this.#sessionsPool = new RobotSessionPool(sessionsFactory);
     this.#explicitConnect = settings.explicitConnect === false ? false : true;
@@ -384,6 +382,8 @@ export default class InOrbit {
    * name if it's the first time it connects to the platform.
    */
   async connectRobot({ robotId, name = 'cloud-sdk' }) {
+    // Await fo the session creation. This assures that we have a valid connection
+    // to the robot
     await this.#sessionsPool.getSession({ robotId, name });
   }
 

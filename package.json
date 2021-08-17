@@ -8,7 +8,8 @@
   "scripts": {
     "build": "babel src --out-file dist/index.js --minified --source-maps --ignore 'src/**/*.test.js'",
     "example": "babel-node example.js",
-    "example-multi-robot": "babel-node example-multi-robot.js"
+    "example-multi-robot": "babel-node example-multi-robot.js",
+    "linter": "eslint src/"
   },
   "dependencies": {
     "async-mqtt": "^2.6.1",
@@ -20,8 +21,14 @@
     "@babel/core": "^7.11.5",
     "@babel/node": "^7.10.5",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
-    "@babel/preset-env": "^7.11.5",
     "@babel/plugin-transform-runtime": "^7.11.5",
-    "@babel/register": "^7.11.5"
+    "@babel/preset-env": "^7.11.5",
+    "@babel/register": "^7.11.5",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-plugin-import": "^2.24.0",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.24.0"
   }
 }

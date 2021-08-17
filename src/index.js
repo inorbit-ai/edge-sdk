@@ -1,8 +1,8 @@
 /**
  * InOrbit Cloud SDK
- * 
+ *
  * Javascript interface to the InOrbit Robot Protocol.
- * 
+ *
  * Copyright 2021 InOrbit, Inc.
  */
 import axios from 'axios';
@@ -139,7 +139,7 @@ class RobotSession {
     const msg = new messages.CustomDataMessage();
     msg.setCustomField(customField);
     const payload = new messages.KeyValuePairs();
-    payload.setPairsList(Object.keys(keyValues).map(k => {
+    payload.setPairsList(Object.keys(keyValues).map((k) => {
       const item = new messages.KeyValueCustomElement();
       item.setKey(k);
       item.setValue(convertValue(keyValues[k]));
@@ -246,7 +246,7 @@ class RobotSessionFactory {
       robotId,
       name,
     },
-      this.robotSessionSettings);
+    this.robotSessionSettings);
   }
 }
 
@@ -287,7 +287,7 @@ class RobotSessionPool {
    * Ends all sessions
    */
   tearDown() {
-    Object.values(this.robotSessions).forEach(rs => rs.end());
+    Object.values(this.robotSessions).forEach((rs) => rs.end());
     this.robotSessions = {};
     this.robotSessionsLastUse = {};
     this.connectPromises = {};
@@ -295,7 +295,7 @@ class RobotSessionPool {
 
   /**
    * Returns if there is a robot session associated to the robotId
-   * @param {string} robotId 
+   * @param {string} robotId
    * @returns {boolean}
    */
   hasRobot(robotId) {
@@ -304,7 +304,7 @@ class RobotSessionPool {
 
   /**
    * Disconnects and frees a robot session
-   * @param {string} robotId 
+   * @param {string} robotId
    */
   async freeRobotSession(robotId) {
     if (!this.hasRobot(robotId)) {
@@ -320,26 +320,29 @@ class RobotSessionPool {
 
 export class Logger {
   info() { }
+
   warn() { }
+
   error() { }
 }
 
 export default class InOrbit {
   #sessionsPool;
+
   #explicitConnect;
 
   /**
    * Initializes the InOrbit
-   * 
+   *
    * @typedef Logger
-   * @property 
-   * 
+   * @property
+   *
    * @typedef Settings
    * @property {string} appKey The account's app key. Used for authentication.
    * @property {string} endpoint InOrbit endpoint URL. Default to https://api.inorbit.ai
    * @property {Logger} logger By default a no-op logger is used
-   * 
-   * @param {Settings} settings 
+   *
+   * @param {Settings} settings
    */
   constructor(settings = {}) {
     const { appKey, endpoint = INORBIT_ENDPOINT_DEFAULT, logger = new Logger() } = settings;
@@ -348,12 +351,12 @@ export default class InOrbit {
     }
     const sessionsFactory = new RobotSessionFactory({ appKey, endpoint, logger });
     this.#sessionsPool = new RobotSessionPool(sessionsFactory);
-    this.#explicitConnect = settings.explicitConnect === false ? false : true;
+    this.#explicitConnect = settings.explicitConnect !== false;
   }
 
   /**
    * Opens a connection associated to a robot and returns the session object.
-   * 
+   *
    * @see connectRobot
    * @returns RobotSession
    */
@@ -376,7 +379,7 @@ export default class InOrbit {
    * Marks a robot as online and initializes the connection. If a connection
    * is already open, it's reused. So, invoking this method multiple times for
    * the same robot will create just one connection.
-   * 
+   *
    * @param {string} robotId
    * @param {string} name Name of the robot. This name will be used as the robot's
    * name if it's the first time it connects to the platform.
@@ -389,7 +392,7 @@ export default class InOrbit {
 
   /**
    * Marks a robot as offline and frees the connection.
-   * 
+   *
    * @param {string} robotId
    */
   async disconnectRobot(robotId) {

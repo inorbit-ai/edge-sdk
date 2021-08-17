@@ -1,0 +1,29 @@
+{
+    "root": true,
+    "extends": "airbnb",
+    "rules": {
+        "max-classes-per-file": "off",
+        "class-methods-use-this": "off",
+        "comma-dangle": "off",
+        "eqeqeq": "off",
+        "no-console": "off",
+        "prefer-template": "off",
+        "no-underscore-dangle": "off",
+        "func-names": "off",
+        "no-param-reassign": "off",
+        "import/extensions": "off",
+        "no-unused-expressions": "off",
+        "no-plusplus": "off",
+        "no-else-return": "off",
+        "object-curly-newline": "off",
+        "no-restricted-syntax": 0
+    },
+    "plugins": [
+    ],
+    "parser": "babel-eslint",
+    "env": {
+        "es2017": true,
+        "node": true
+    },
+    "ignorePatterns": ["src/*_pb.js"]
+}

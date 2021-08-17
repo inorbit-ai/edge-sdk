@@ -1,7 +1,7 @@
 /**
  * InOrbit Cloud SDK Example showing how to send data belonging to one robot
  * to the InOrbit Platform.
- * 
+ *
  * Copyright 2021 InOrbit, Inc.
  */
 
@@ -9,15 +9,15 @@
 import InOrbit from './src';
 
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function main() {
   const robotId = 'xxxx';
 
-  // Initialize InOrbit 
+  // Initialize InOrbit
   const sdk = new InOrbit({
-    appKey: process.env['INORBIT_APP_KEY'],
+    appKey: process.env.INORBIT_APP_KEY,
     // Include logging to the console
     logger: {
       info: console.log,

@@ -6,7 +6,7 @@
  */
 
 // Import InOrbit
-import InOrbit from './src';
+import InOrbit from '@inorbit/cloud-sdk';
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -15,7 +15,7 @@ function sleep(ms) {
 async function main() {
   const robotId = 'xxxx';
 
-  // Initialize InOrbit
+  // Initialize the SDK reading the InOrbit App Key from the environment
   const sdk = new InOrbit({
     appKey: process.env.INORBIT_APP_KEY,
     // Include logging to the console

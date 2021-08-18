@@ -13,27 +13,27 @@ to various robots to InOrbit:
 import InOrbit from '@inorbit/cloud-sdk';
 
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function main() {
-  const robots = [ 'robot0', 'robot1', 'robot2', 'robot3' ];
+  const robots = ['robot0', 'robot1', 'robot2', 'robot3'];
 
-  const sdk = new InOrbit({ appKey: process.env['INORBIT_APP_KEY'] });
+  // Initialize the SDK reading the InOrbit App Key from the environment
+  const sdk = new InOrbit({ appKey: process.env.INORBIT_APP_KEY });
 
   // Initialize the connection for each robot
-  await Promise.all(robots.map(robotId => sdk.connectRobot({ robotId })));
+  await Promise.all(robots.map((robotId) => sdk.connectRobot({ robotId })));
 
   while (true) {
-
     // Publish Key-Values with battery and status values
-    await Promise.all(robots.map(robotId => sdk.publishCustomDataKV(robotId, {
+    await Promise.all(robots.map((robotId) => sdk.publishCustomDataKV(robotId, {
       battery: Math.random() * 100,
       status: Math.random() > 0.5 ? 'Mission' : 'Idle'
     })));
 
     // Publish the robots' poses
-    await Promise.all(robots.map(robotId => sdk.publishPose(robotId, {
+    await Promise.all(robots.map((robotId) => sdk.publishPose(robotId, {
       ts: new Date().getTime(),
       x: Math.random() * 20 + 20,
       y: Math.random() * 20 + 10,

@@ -10,7 +10,7 @@ The following example shows how this package can be used to send data belonging
 to various robots to InOrbit:
 
 ```javascript
-import InOrbit from './src';
+import InOrbit from '@inorbit/cloud-sdk';
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));

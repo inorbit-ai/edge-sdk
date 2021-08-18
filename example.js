@@ -6,7 +6,7 @@
  */
 
 // Import InOrbit
-import InOrbit from './src';
+import InOrbit from '@inorbit/cloud-sdk';
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));

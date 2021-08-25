@@ -1,6 +1,6 @@
 {
   "name": "@inorbit/cloud-sdk",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "InOrbit Cloud SDK",
   "main": "dist/index.js",
   "author": "support@inorbit.ai",

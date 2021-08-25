@@ -5,8 +5,7 @@
  * Copyright 2021 InOrbit, Inc.
  */
 
-// Import InOrbit
-import InOrbit from '@inorbit/cloud-sdk';
+import { InOrbit } from '@inorbit/cloud-sdk';
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));

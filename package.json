@@ -1,11 +1,11 @@
 {
   "name": "@inorbit/cloud-sdk",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "InOrbit Cloud SDK",
   "main": "dist/index.js",
   "author": "support@inorbit.ai",
   "scripts": {
-    "build": "babel src -d dist --minified --source-maps --ignore 'src/**/*.test.js'",
+    "build": "babel src -d dist --minified --source-maps --ignore 'src/**/*.test.js' && tsc -d --emitDeclarationOnly --allowJs src/index.js --outDir dist/",
     "example": "babel-node example.js",
     "example-multi-robot": "babel-node example-multi-robot.js",
     "linter": "eslint src/"
@@ -23,11 +23,13 @@
     "@babel/plugin-transform-runtime": "^7.11.5",
     "@babel/preset-env": "^7.11.5",
     "@babel/register": "^7.11.5",
+    "@types/node": "^16.7.1",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-plugin-import": "^2.24.0",
     "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-react": "^7.24.0"
+    "eslint-plugin-react": "^7.24.0",
+    "typescript": "^4.3.5"
   }
 }

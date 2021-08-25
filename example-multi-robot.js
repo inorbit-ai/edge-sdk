@@ -5,7 +5,7 @@
  * Copyright 2021 InOrbit, Inc.
  */
 
-import InOrbit from '@inorbit/cloud-sdk';
+import { InOrbit } from '@inorbit/cloud-sdk';
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -18,7 +18,7 @@ async function main() {
   const sdk = new InOrbit({ appKey: process.env.INORBIT_APP_KEY });
 
   // Initialize the connection for each robot
-  await Promise.all(robots.map((robotId) => sdk.connectRobot({ robotId })));
+  await Promise.all(robots.map((robotId) => sdk.connectRobot({ robotId, name: robotId })));
 
   while (true) {
     // Publish Key-Values with battery and status values

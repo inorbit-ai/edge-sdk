@@ -326,7 +326,7 @@ export class Logger {
   error() { }
 }
 
-export default class InOrbit {
+export class InOrbit {
   #sessionsPool;
 
   #explicitConnect;
@@ -414,16 +414,19 @@ export default class InOrbit {
   /**
    * Publishes pose to InOrbit
    *
-   * @param {string} robotId
-   * @param {number} ts Timestamp in milliseconds
-   * @param {number} x
-   * @param {number} y
-   * @param {number} yaw Yaw in radians
-   * @param {string} frameId Robot's reference frame id
+   * @typedef StampedPose
+   * @property {number} ts Timestamp in milliseconds
+   * @property {number} x
+   * @property {number} y
+   * @property {number} yaw Yaw in radians
+   * @property {string} frameId Robot's reference frame id
+   *
+   * @param {string} robotId Id of the robot
+   * @param {StampedPose} pose Robot pose
    */
-  async publishPose(robotId, { ts, x, y, yaw, frameId }) {
+  async publishPose(robotId, pose) {
     const sess = await this.#getRobotSession({ robotId });
-    return sess.publishPose({ ts, x, y, yaw, frameId });
+    return sess.publishPose(pose);
   }
 
   /**
@@ -437,22 +440,17 @@ export default class InOrbit {
    * @property {number} linear Linear distance in m
    * @property {number} angular Angular distance in rad
    *
-   * @param {string} robotId
-   * @param {number} tsStart when are you counting from.
-   * @param {number} ts when the measurement was taken
-   * @param {Speed} speed
-   * @param {Distance} distance
+   * @typedef StampedOdometry
+   * @property {number} tsStart when are you counting from.
+   * @property {number} ts when the measurement was taken
+   * @property {Distance} distance
+   * @property {Speed} speed
+   *
+   * @param {string} robotId Id of the robot
+   * @param {StampedOdometry} odometry Odometry data
    */
-  async publishOdometry(robotId, { tsStart,
-    ts,
-    distance = { linear: 0, angular: 0 },
-    speed = { linear: 0, angular: 0 } }) {
+  async publishOdometry(robotId, odometry) {
     const sess = await this.#getRobotSession({ robotId });
-    return sess.publishOdometry({
-      tsStart,
-      ts,
-      distance,
-      speed
-    });
+    return sess.publishOdometry(odometry);
   }
 }

@@ -6,11 +6,17 @@ on behalf of robots - providing robot data and handling robot actions.
 It's goal is to ease the integration between InOrbit and any other software that 
 handles robot data.
 
+This package can be installed using NPM as shown below:
+
+```console
+npm i inorbit@cloud-sdk
+```
+
 The following example shows how this package can be used to send data belonging
 to various robots to InOrbit:
 
 ```javascript
-import InOrbit from '@inorbit/cloud-sdk';
+import { InOrbit } from '@inorbit/cloud-sdk';
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));

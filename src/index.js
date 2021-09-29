@@ -1,5 +1,5 @@
 /**
- * InOrbit Cloud SDK
+ * InOrbit Edge SDK
  *
  * Javascript interface to the InOrbit Robot Protocol.
  *
@@ -9,10 +9,10 @@ import axios from 'axios';
 import mqtt from 'async-mqtt';
 import messages from './inorbit_pb';
 
-const CLOUD_SDK_VERSION = '0.1.0';
+const EDGE_SDK_VERSION = '0.1.0';
 const INORBIT_ENDPOINT_DEFAULT = 'https://control.inorbit.ai/cloud_sdk_robot_config';
 // Agent version reported when a robot connection is open using this SDK
-const AGENT_VERSION = `${CLOUD_SDK_VERSION}.cloudsdk`;
+const AGENT_VERSION = `${EDGE_SDK_VERSION}.edgesdk`;
 
 // MQTT Topics
 const MQTT_TOPIC_CUSTOM_DATA = 'custom';
@@ -360,7 +360,7 @@ export class InOrbit {
    * @see connectRobot
    * @returns RobotSession
    */
-  async #getRobotSession({ robotId, name = 'cloud-sdk' }) {
+  async #getRobotSession({ robotId, name = 'edge-sdk' }) {
     if (this.#explicitConnect && !this.#sessionsPool.hasRobot(robotId)) {
       throw new Error('Can\'t get robot session or send data before connecting. Use connectRobot before sending any data');
     }
@@ -384,7 +384,7 @@ export class InOrbit {
    * @param {string} name Name of the robot. This name will be used as the robot's
    * name if it's the first time it connects to the platform.
    */
-  async connectRobot({ robotId, name = 'cloud-sdk' }) {
+  async connectRobot({ robotId, name = 'edge-sdk' }) {
     // Await fo the session creation. This assures that we have a valid connection
     // to the robot
     await this.#sessionsPool.getSession({ robotId, name });

@@ -1,7 +1,7 @@
 {
-  "name": "@inorbit/cloud-sdk",
+  "name": "@inorbit/edge-sdk",
   "version": "0.1.5",
-  "description": "InOrbit Cloud SDK",
+  "description": "InOrbit Edge SDK",
   "main": "dist/index.js",
   "author": "support@inorbit.ai",
   "scripts": {

@@ -1,11 +1,11 @@
 /**
- * InOrbit Cloud SDK Example showing how to send data belonging to various robots
+ * InOrbit Edge SDK Example showing how to send data belonging to various robots
  * to the InOrbit Platform.
  *
  * Copyright 2021 InOrbit, Inc.
  */
 
-import { InOrbit } from '@inorbit/cloud-sdk';
+import { InOrbit } from '@inorbit/edge-sdk';
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));

@@ -1,7 +1,7 @@
-InOrbit Cloud SDK
+InOrbit Edge SDK
 ---
 
-The InOrbit Cloud SDK allows Javascript programs to communicate with the **InOrbit platform**
+The InOrbit Edge SDK allows Javascript programs to communicate with **InOrbit platform**
 on behalf of robots - providing robot data and handling robot actions.
 It's goal is to ease the integration between InOrbit and any other software that 
 handles robot data.
@@ -9,14 +9,14 @@ handles robot data.
 This package can be installed using NPM as shown below:
 
 ```console
-npm i inorbit@cloud-sdk
+npm i inorbit@edge-sdk
 ```
 
 The following example shows how this package can be used to send data belonging
 to various robots to InOrbit:
 
 ```javascript
-import { InOrbit } from '@inorbit/cloud-sdk';
+import { InOrbit } from '@inorbit/edge-sdk';
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -54,8 +54,8 @@ async function main() {
 main();
 ```
 
-The code publishes generated data about four robots to InOrbit. The data is then
-available in the InOrbit platform and can be queried via APIs or using the InOrbit Control application.
+The code publishes fake data about four robots to InOrbit. The data is then
+available in InOrbit platform and can be queried via APIs or using InOrbit Control.
 
 You can extend this example to actually integrate your existing applications, including fleet manager systems,
 with InOrbit.

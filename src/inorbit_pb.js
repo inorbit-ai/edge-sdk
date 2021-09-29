@@ -1,5 +1,5 @@
 /**
- * InOrbit Cloud SDK
+ * InOrbit Edge SDK
  * 
  * Javascript interface to the InOrbit Robot Protocol.
  * 

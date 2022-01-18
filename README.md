@@ -9,7 +9,7 @@ handles robot data.
 This package can be installed using NPM as shown below:
 
 ```console
-npm i inorbit@edge-sdk
+npm i @inorbit/edge-sdk
 ```
 
 The following example shows how this package can be used to send data belonging

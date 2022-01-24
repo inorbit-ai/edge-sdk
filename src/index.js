@@ -32,7 +32,7 @@ class RobotSession {
    * before publishing any message.
    *
    * @typedef {Settings}
-   * @property {string} appKey
+   * @property {string} apiKey
    * @property {string} endpoint URL of the HTTP endpoint to fetch
    * robots settings.
    *
@@ -44,22 +44,22 @@ class RobotSession {
     this.robotId = robotId;
     this.name = name;
     this.agentVersion = AGENT_VERSION;
-    this.appKey = settings.appKey;
+    this.apiKey = settings.apiKey;
     this.endpoint = settings.endpoint;
     this.logger = settings.logger;
   }
 
   /**
    * Fetches the configuration for this robot session based on its robotId and
-   * appKey
+   * apiKey
    *
    * @returns {Object} Robot configuration
    */
   async fetchRobotConfig() {
-    this.logger.info(`Fetching config for robot ${this.robotId} for appKey ${this.appKey.substr(0, 3)}...`);
+    this.logger.info(`Fetching config for robot ${this.robotId} for apiKey ${this.apiKey.substr(0, 3)}...`);
 
     const params = {
-      appKey: this.appKey,
+      apiKey: this.apiKey,
       robotId: this.robotId,
       hostname: this.name,
       agentVersion: this.agentVersion
@@ -224,7 +224,7 @@ class RobotSessionFactory {
    * Creates a RobotSession factory
    *
    * @typedef {Settings}
-   * @property {string} appKey Company app key
+   * @property {string} apiKey Company api key
    * @property {string} endpoint URL of the HTTP endpoint to fetch
    * robots settings.
    *
@@ -338,18 +338,18 @@ export class InOrbit {
    * @property
    *
    * @typedef Settings
-   * @property {string} appKey The account's app key. Used for authentication.
+   * @property {string} apiKey The account's API key. Used for authentication.
    * @property {string} endpoint InOrbit endpoint URL. Default to https://api.inorbit.ai
    * @property {Logger} logger By default a no-op logger is used
    *
    * @param {Settings} settings
    */
   constructor(settings = {}) {
-    const { appKey, endpoint = INORBIT_ENDPOINT_DEFAULT, logger = new Logger() } = settings;
-    if (!appKey) {
-      throw Error('InOrbit expects appKey as part of the settings');
+    const { apiKey, endpoint = INORBIT_ENDPOINT_DEFAULT, logger = new Logger() } = settings;
+    if (!apiKey) {
+      throw Error('InOrbit expects apiKey as part of the settings');
     }
-    const sessionsFactory = new RobotSessionFactory({ appKey, endpoint, logger });
+    const sessionsFactory = new RobotSessionFactory({ apiKey, endpoint, logger });
     this.#sessionsPool = new RobotSessionPool(sessionsFactory);
     this.#explicitConnect = settings.explicitConnect !== false;
   }

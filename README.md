@@ -25,8 +25,8 @@ function sleep(ms) {
 async function main() {
   const robots = ['robot0', 'robot1', 'robot2', 'robot3'];
 
-  // Initialize the SDK reading the InOrbit App Key from the environment
-  const sdk = new InOrbit({ appKey: process.env.INORBIT_APP_KEY });
+  // Initialize the SDK reading the InOrbit API Key from the environment
+  const sdk = new InOrbit({ apiKey: process.env.INORBIT_API_KEY });
 
   // Initialize the connection for each robot
   await Promise.all(robots.map((robotId) => sdk.connectRobot({ robotId })));

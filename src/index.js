@@ -9,7 +9,7 @@ import axios from 'axios';
 import mqtt from 'async-mqtt';
 import messages from './inorbit_pb';
 
-const EDGE_SDK_VERSION = '0.1.0';
+const EDGE_SDK_VERSION = '0.3.0';
 const INORBIT_ENDPOINT_DEFAULT = 'https://control.inorbit.ai/cloud_sdk_robot_config';
 // Agent version reported when a robot connection is open using this SDK
 const AGENT_VERSION = `${EDGE_SDK_VERSION}.edgesdk`;

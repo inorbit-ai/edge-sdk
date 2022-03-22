@@ -13,7 +13,6 @@ function sleep(ms) {
 
 async function main() {
   const robotId = 'xxxx';
-
   // Initialize the SDK reading the InOrbit API Key from the environment
   const sdk = new InOrbit({
     apiKey: process.env.INORBIT_API_KEY,
@@ -52,6 +51,20 @@ async function main() {
         linear: Math.random() * 10,
         angular: Math.random() * Math.PI
       }
+    });
+
+    await sdk.publishPaths(robotId, {
+      ts: new Date().getTime(),
+      paths: [
+        {
+          pathId: '0',
+          ts: new Date().getTime(),
+          points: [
+            { x: 0, y: 0 },
+            { x: Math.random() * 20 + 20, y: Math.random() * 20 + 10},
+          ]
+        }
+      ]
     });
     await sleep(1000);
   }

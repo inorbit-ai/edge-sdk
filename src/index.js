@@ -18,6 +18,7 @@ const AGENT_VERSION = `${EDGE_SDK_VERSION}.edgesdk`;
 const MQTT_TOPIC_CUSTOM_DATA = 'custom';
 const MQTT_TOPIC_LOCALIZATION = 'ros/loc/data2';
 const MQTT_TOPIC_ODOMETRY = 'ros/odometry/data';
+const MQTT_TOPIC_PATHS = 'ros/loc/path';
 
 /**
  * RobotSession represent the session of a robot connected to InOrbit from the
@@ -59,12 +60,11 @@ class RobotSession {
     this.logger.info(`Fetching config for robot ${this.robotId} for apiKey ${this.apiKey.substr(0, 3)}...`);
 
     const params = {
-      apiKey: this.apiKey,
+      appKey: this.apiKey,
       robotId: this.robotId,
       hostname: this.name,
       agentVersion: this.agentVersion
     };
-
     const response = await axios.post(this.endpoint, params);
     if (response.status != 200 || !response.data) {
       throw Error(`Failed to fetch config for robot ${this.robotId}`);
@@ -202,6 +202,42 @@ class RobotSession {
     msg.setAngularSpeed(speed.angular);
     msg.setSpeedAvailable(true);
     return this.publishProtobuf(MQTT_TOPIC_ODOMETRY, msg);
+  }
+
+  /**
+   * Publishes paths to InOrbit
+   *
+   * @typedef Point
+   * @property {number} x
+   * @property {number} y
+   *
+   * @typedef Path
+   * @property {number} ts
+   * @property {string} pathId
+   * @property {Array<Point>} points
+   *
+   * @param {number} ts Timestamp in milliseconds
+   * @param {Array<Path>} paths
+   */
+  publishPaths({ ts, paths = [] }) {
+    this.logger.info(`Publishing paths ${JSON.stringify({ ts, paths })}`);
+    const msg = new messages.PathDataMessage();
+    msg.setTs(ts);
+    const protoPaths = paths.map((path) => {
+      const protoPath = new messages.RobotPath();
+      protoPath.setTs(path.ts || ts);
+      protoPath.setPathId(path.pathId);
+      const points = (path.points || []).map((point) => {
+        const protoPoint = new messages.PathPoint();
+        protoPoint.setX(point.x);
+        protoPoint.setX(point.y);
+        return protoPoint;
+      });
+      protoPath.setPointsList(points);
+      return protoPath;
+    });
+    msg.setPathsList(protoPaths);
+    return this.publishProtobuf(MQTT_TOPIC_PATHS, msg);
   }
 
   /**
@@ -452,5 +488,29 @@ export class InOrbit {
   async publishOdometry(robotId, odometry) {
     const sess = await this.#getRobotSession({ robotId });
     return sess.publishOdometry(odometry);
+  }
+
+  /**
+   * Publishes paths to InOrbit
+   *
+   * @typedef Point
+   * @property {number} x
+   * @property {number} y
+   *
+   * @typedef Path
+   * @property {number} ts
+   * @property {string} pathId
+   * @property {Array<Point>} points
+   *
+   * @typedef StampedPaths
+   * @property {number} ts when the measurement was taken
+   * @param {Array<Path>} paths
+   *
+   * @param {string} robotId Id of the robot
+   * @param {StampedPaths} paths Paths data
+   */
+  async publishPaths(robotId, paths) {
+    const sess = await this.#getRobotSession({ robotId });
+    return sess.publishPaths(paths);
   }
 }

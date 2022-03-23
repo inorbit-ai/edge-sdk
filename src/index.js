@@ -230,7 +230,7 @@ class RobotSession {
       const points = (path.points || []).map((point) => {
         const protoPoint = new messages.PathPoint();
         protoPoint.setX(point.x);
-        protoPoint.setX(point.y);
+        protoPoint.setY(point.y);
         return protoPoint;
       });
       protoPath.setPointsList(points);

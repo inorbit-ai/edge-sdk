@@ -48,6 +48,8 @@ class RobotSession {
     this.apiKey = settings.apiKey;
     this.endpoint = settings.endpoint;
     this.logger = settings.logger;
+
+    this.callbacks = {};
   }
 
   /**
@@ -91,6 +93,8 @@ class RobotSession {
       }
     });
 
+    this.mqtt.on('message', this._onMessage);
+
     if (this.ended) {
       // In case this session was ended by end() while it was connecting
       this.mqtt.end();
@@ -112,6 +116,48 @@ class RobotSession {
     this.mqtt && this.mqtt.end();
   }
 
+  _onMessage = (topic, message) => {
+    if (this.callbacks && this.callbacks[topic]) {
+      console.log(`Processing message from topic ${topic}: ${message.toString()}`);
+      this.callbacks[topic](topic, message);
+    } else {
+      console.warn(`Received message on topic ${topic} but no callback found.`);
+    }
+  }
+  
+  /**
+   * Build topic for this robot.
+   * 
+   * It returns a robot topic by concatenating the robot id
+   * base topic with the provided subtopic.
+   * @param {string} subtopic
+   */
+  getRobotSubtopic(subtopic) {
+
+    if (subtopic.startsWith("/")) {
+      throw new Error("Subtopic shouldn't start with '/'.")
+    }
+
+    return `r/${this.robotId}/${subtopic}`
+  }
+
+  /**
+   * Subscribes to a robot topic.
+   * @param {string} topic
+   * @param {Object} options
+   */
+  subscribe(topic, options) {
+    this.mqtt.subscribe(this.getRobotSubtopic(topic), options);
+  }
+
+  registerCallback(topic, func, options) {
+    this.logger.info(`Registering callback function for robot topic ${topic}`);
+
+    this.callbacks[this.getRobotSubtopic(topic)] = func;
+    
+    this.subscribe(topic, options);
+  } 
+
   /**
    * Publishes a string or Buffer message
    * @param {string} topic
@@ -119,7 +165,7 @@ class RobotSession {
    * @param {Object} options
    */
   publish(topic, msg, options) {
-    return this.mqtt.publish(`r/${this.robotId}/${topic}`, msg, options);
+    return this.mqtt.publish(this.getRobotSubtopic(topic), msg, options);
   }
 
   /**
@@ -512,5 +558,10 @@ export class InOrbit {
   async publishPaths(robotId, paths) {
     const sess = await this.#getRobotSession({ robotId });
     return sess.publishPaths(paths);
+  }
+
+  async registerCallback(robotId, topic, func) {
+    const sess = await this.#getRobotSession({ robotId });
+    return sess.registerCallback(topic, func);
   }
 }

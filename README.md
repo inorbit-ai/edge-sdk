@@ -1,5 +1,4 @@
-InOrbit Edge SDK
----
+# InOrbit Edge SDK
 
 The InOrbit Edge SDK allows Javascript programs to communicate with **InOrbit platform**
 on behalf of robots - providing robot data and handling robot actions.

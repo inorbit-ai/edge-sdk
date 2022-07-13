@@ -5,7 +5,7 @@
  * Copyright 2021 InOrbit, Inc.
  */
 
-import { InOrbit } from '@inorbit/edge-sdk';
+import { InOrbit } from '.';
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -26,6 +26,12 @@ async function main() {
 
   // Initialize the robot connection
   await sdk.connectRobot({ robotId, name: 'robot0' });
+
+  await sdk.registerCallback(
+    robotId, 'ros/loc/nav_goal', function (topic, message) {
+      console.log(message.toString());
+    }
+  );
 
   while (true) {
     // Publish Key-Values for battery and status
@@ -66,7 +72,7 @@ async function main() {
         }
       ]
     });
-    await sleep(1000);
+    await sleep(50000000);
   }
 }
 

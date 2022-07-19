@@ -182,7 +182,7 @@ class RobotSession {
     this.commandCallbacks.forEach(c => {
       // Prepare report result function bound to the specific execution ID
       const resultFunction = (resultCode) => this.#reportCommandResult(executionId, resultCode);
-      // TODO(adamantivm) Implement progress resporting function
+      // TODO(adamantivm) Implement progress reporting function
       const progressFunction = () => {};
       // Call the callback method
       c(commandName, args, { resultFunction, progressFunction, metadata: {}});

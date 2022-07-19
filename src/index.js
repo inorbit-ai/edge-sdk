@@ -35,6 +35,10 @@ const MQTT_CUSTOM_COMMAND = 'custom_command/script/command'
  * a clean interface to the InOrbit Robot Protocol.
  */
 class RobotSession {
+  // Object with pointers to functions to handle incoming MQTT messages,
+  // indexed by MQTT subtopic
+  #messageHandlers = {}
+
   /**
    * Initializes a robot session.
    *
@@ -58,9 +62,7 @@ class RobotSession {
     this.endpoint = settings.endpoint;
     this.logger = settings.logger;
     this.commandCallbacks = [];
-    this.messageHandlers = {
-      [MQTT_INITIAL_POSE]: this.handleInitialPose
-    };
+    this.#messageHandlers[MQTT_INITIAL_POSE] = this.#handleInitialPose;
   }
 
   /**
@@ -103,7 +105,7 @@ class RobotSession {
         retain: true
       }
     });
-    this.mqtt.on('message', this.onMessage);
+    this.mqtt.on('message', this.#onMessage);
 
     // Subscribe to incoming topics
     // TODO(adamantivm) Perform lazy subscription, only when callbacks are registered
@@ -133,7 +135,7 @@ class RobotSession {
   /**
    * Internal method: sends an echo response to the server
    */
-  sendEcho(topic, payload) {
+  #sendEcho(topic, payload) {
     const msg = new messages.Echo();
     msg.setTopic(topic);
     msg.setTimeStamp(Date.now());
@@ -145,26 +147,26 @@ class RobotSession {
   /**
    * Internal method: callback used to route incoming MQTT messages
    */
-  onMessage = (topic, message) => {
+  #onMessage = (topic, message) => {
     // Respond with an echo message, so that the server knows this message was received
-    this.sendEcho(topic, message);
+    this.#sendEcho(topic, message);
 
     // Extract subtopic from the incoming topic
     const subtopic = topic.split('/').slice(2).join('/');
     // Hand over to the handler specific to this subtopic, if any is registered
-    if (subtopic in this.messageHandlers) {
-      this.messageHandlers[subtopic](message);
+    if (subtopic in this.#messageHandlers) {
+      this.#messageHandlers[subtopic](message);
     }
   }
 
   /**
    * Internal method: handle incoming MQTT_INITIAL_POSE message
    */
-  handleInitialPose = (message) => {
+  #handleInitialPose = (message) => {
     // Decode incoming message
     const [seq, ts, x, y, theta] = message.toString().split("|");
     // Hand over to callback for processing, using the proper format
-    this.dispatchCommand(
+    this.#dispatchCommand(
       'initialPose', // TODO(adamantivm) Document publicly
       [{ x, y, theta }],
       seq // NOTE(adamantivm) Using seq as the execution ID
@@ -175,11 +177,11 @@ class RobotSession {
    * Internal method: executes registered command callbacks for a specific incoming
    * command / action
    */
-  dispatchCommand = (commandName, args, executionId) => {
+  #dispatchCommand = (commandName, args, executionId) => {
     // TODO(adaamantivm) try/catch block on each execution
     this.commandCallbacks.forEach(c => {
       // Prepare report result function bound to the specific execution ID
-      const resultFunction = (resultCode) => this.reportCommandResult(executionId, resultCode);
+      const resultFunction = (resultCode) => this.#reportCommandResult(executionId, resultCode);
       // TODO(adamantivm) Implement progress resporting function
       const progressFunction = () => {};
       // Call the callback method
@@ -191,7 +193,7 @@ class RobotSession {
    * Internal method: conveys to the server the reported result of a command executed by a
    * registered  user callback
    */
-  reportCommandResult = (executionId, resultCode) => {
+  #reportCommandResult = (executionId, resultCode) => {
     // TODO(adamantivm) Implement
   }
 
@@ -347,6 +349,8 @@ class RobotSession {
    *
    *   callback(commandName, arguments, options)
    *
+   * @param {string} commandName identifies the specific command to be executed
+   *
    * @param {array} arguments is an ordered list with each argument as an entry.
    * Each element of the array can be a string or an object, depending on the
    * definition of the action.
@@ -500,6 +504,8 @@ export class InOrbit {
 
   #explicitConnect;
 
+  #commandCallbacks = [];
+
   /**
    * Initializes the InOrbit
    *
@@ -524,6 +530,13 @@ export class InOrbit {
   }
 
   /**
+   * Frees all resources and connections used by this InOrbit object
+   */
+  tearDown() {
+    this.sessionsPool.tearDown();
+  }
+
+  /**
    * Opens a connection associated to a robot and returns the session object.
    *
    * @see connectRobot
@@ -538,10 +551,13 @@ export class InOrbit {
   }
 
   /**
-   * Frees all resources and connections used by this InOrbit object
+   * Relays a command received from a robot session to all command callbacks
+   * registered by users.
+   *
+   * @see registerCommandCallback
    */
-  tearDown() {
-    this.sessionsPool.tearDown();
+  #dispatchCommand(...args) {
+    this.#commandCallbacks.forEach(c => c(...args));
   }
 
   /**
@@ -553,10 +569,16 @@ export class InOrbit {
    * @param {string} name Name of the robot. This name will be used as the robot's
    * name if it's the first time it connects to the platform.
    */
-  async connectRobot({ robotId, name = 'edge-sdk' }) {
+  connectRobot = async ({ robotId, name = 'edge-sdk' }) => {
     // Await fo the session creation. This assures that we have a valid connection
     // to the robot
-    await this.#sessionsPool.getSession({ robotId, name });
+    const session = await this.#sessionsPool.getSession({ robotId, name });
+    // Register ourselvs to be notified about command messages so that they can be
+    // relayed to callbacks registered by users to the SDK
+    session.registerCommandCallback((...args) => (
+      this.#dispatchCommand.apply(this, [robotId, ...args])
+    ));
+    return session;
   }
 
   /**
@@ -649,13 +671,17 @@ export class InOrbit {
 
   /**
    * Registers a callback function to be called whenever a command
-   * for the robot is received.
+   * is received for any of the robots for which sessions are created
+   * now or later.
    *
-   * @param {string} robotId Id of the robot to register this callback for
    * @param {function} callback will be called each time a message is received.
    * It should have the following signature:
    *
-   *   callback(commandName, arguments, options)
+   *   callback(robotId, commandName, arguments, options)
+   *
+   * @param {string} robotId ID of the robot for which the command is intended
+   *
+   * @param {string} commandName identifies the specific command to be executed
    *
    * @param {array} arguments is an ordered list with each argument as an entry.
    * Each element of the array can be a string or an object, depending on the
@@ -678,8 +704,12 @@ export class InOrbit {
    * @param {object} metadata is reserved for the future and will contains additional
    * information about the received command request.
    */
-  async registerCommandCallback(robotId, callback) {
-    const sess = await this.#getRobotSession({ robotId });
-    return sess.registerCommandCallback(callback);
+  async registerCommandCallback(callback) {
+    if (!isFunction(callback)) {
+      // Don't do anything if callback is not a valid function
+      return;
+    }
+    this.#commandCallbacks.push(callback);
+    return this;
   }
 }

@@ -11,14 +11,23 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/**
+ * Dummy sample command callback function
+ */
+function logCommand(robotId, commandName, args, options) {
+  console.log('Received command! What should I do now?', {
+    commandName, args, options, robotId
+  });
+}
+
 async function main() {
-  const robotId = 'xxxx';
+  const robotId = 'joxx4';
   // Initialize the SDK reading the InOrbit API Key from the environment
   const sdk = new InOrbit({
     apiKey: process.env.INORBIT_API_KEY,
     // Include logging to the console
     logger: {
-      info: console.log,
+      info: () => {},
       error: console.log,
       warn: console.log,
     }
@@ -26,6 +35,9 @@ async function main() {
 
   // Initialize the robot connection
   await sdk.connectRobot({ robotId, name: 'robot0' });
+
+  // Register a sample command callback function
+  sdk.registerCommandCallback(logCommand);
 
   while (true) {
     // Publish Key-Values for battery and status

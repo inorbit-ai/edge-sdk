@@ -7,6 +7,7 @@
  */
 import axios from 'axios';
 import mqtt from 'async-mqtt';
+import { isFunction } from 'lodash';
 import messages from './inorbit_pb';
 
 const EDGE_SDK_VERSION = '0.3.0';
@@ -19,6 +20,14 @@ const MQTT_TOPIC_CUSTOM_DATA = 'custom';
 const MQTT_TOPIC_LOCALIZATION = 'ros/loc/data2';
 const MQTT_TOPIC_ODOMETRY = 'ros/odometry/data';
 const MQTT_TOPIC_PATHS = 'ros/loc/path';
+const MQTT_TOPIC_ECHO = 'echo';
+// built-in commands
+const MQTT_NAV_GOAL_GOAL = 'ros/loc/nav_goal';
+const MQTT_NAV_GOAL_MULTI = 'ros/loc/goal_path';
+const MQTT_INITIAL_POSE = 'ros/loc/set_pose';
+// custom commands
+const MQTT_CUSTOM_COMMAND = 'custom_command/script/command'
+
 
 /**
  * RobotSession represent the session of a robot connected to InOrbit from the
@@ -26,6 +35,10 @@ const MQTT_TOPIC_PATHS = 'ros/loc/path';
  * a clean interface to the InOrbit Robot Protocol.
  */
 class RobotSession {
+  // Object with pointers to functions to handle incoming MQTT messages,
+  // indexed by MQTT subtopic
+  #messageHandlers = {}
+
   /**
    * Initializes a robot session.
    *
@@ -48,6 +61,8 @@ class RobotSession {
     this.apiKey = settings.apiKey;
     this.endpoint = settings.endpoint;
     this.logger = settings.logger;
+    this.commandCallbacks = [];
+    this.#messageHandlers[MQTT_INITIAL_POSE] = this.#handleInitialPose;
   }
 
   /**
@@ -90,6 +105,11 @@ class RobotSession {
         retain: true
       }
     });
+    this.mqtt.on('message', this.#onMessage);
+
+    // Subscribe to incoming topics
+    // TODO(adamantivm) Perform lazy subscription, only when callbacks are registered
+    this.subscribe(MQTT_INITIAL_POSE);
 
     if (this.ended) {
       // In case this session was ended by end() while it was connecting
@@ -113,10 +133,79 @@ class RobotSession {
   }
 
   /**
-   * Publishes a string or Buffer message
-   * @param {string} topic
-   * @param {string|Buffer} msg
-   * @param {Object} options
+   * Internal method: sends an echo response to the server
+   */
+  #sendEcho(topic, payload) {
+    const msg = new messages.Echo();
+    msg.setTopic(topic);
+    msg.setTimeStamp(Date.now());
+    // TODO(adamantivm) Filter out non-String topics
+    msg.setStringPayload(payload.toString());
+    this.publishProtobuf(MQTT_TOPIC_ECHO, msg);
+  }
+
+  /**
+   * Internal method: callback used to route incoming MQTT messages
+   */
+  #onMessage = (topic, message) => {
+    // Respond with an echo message, so that the server knows this message was received
+    this.#sendEcho(topic, message);
+
+    // Extract subtopic from the incoming topic
+    const subtopic = topic.split('/').slice(2).join('/');
+    // Hand over to the handler specific to this subtopic, if any is registered
+    if (subtopic in this.#messageHandlers) {
+      this.#messageHandlers[subtopic](message);
+    }
+  }
+
+  /**
+   * Internal method: handle incoming MQTT_INITIAL_POSE message
+   */
+  #handleInitialPose = (message) => {
+    // Decode incoming message
+    const [seq, ts, x, y, theta] = message.toString().split("|");
+    // Hand over to callback for processing, using the proper format
+    this.#dispatchCommand(
+      'initialPose', // TODO(adamantivm) Document publicly
+      [{ x, y, theta }],
+      seq // NOTE(adamantivm) Using seq as the execution ID
+    );
+  }
+
+  /**
+   * Internal method: executes registered command callbacks for a specific incoming
+   * command / action
+   */
+  #dispatchCommand = (commandName, args, executionId) => {
+    // TODO(adaamantivm) try/catch block on each execution
+    this.commandCallbacks.forEach(c => {
+      // Prepare report result function bound to the specific execution ID
+      const resultFunction = (resultCode) => this.#reportCommandResult(executionId, resultCode);
+      // TODO(adamantivm) Implement progress reporting function
+      const progressFunction = () => {};
+      // Call the callback method
+      c(commandName, args, { resultFunction, progressFunction, metadata: {}});
+    });
+  }
+
+  /**
+   * Internal method: conveys to the server the reported result of a command executed by a
+   * registered  user callback
+   */
+  #reportCommandResult = (executionId, resultCode) => {
+    // TODO(adamantivm) Implement
+  }
+
+  /**
+   * Internal method: subscribes to a given subtopic for the current robot session.
+   */
+  subscribe(subtopic, options) {
+    return this.mqtt.subscribe(`r/${this.robotId}/${subtopic}`, options);
+  }
+
+  /**
+   * Internal method: Publishes a string or Buffer message
    */
   publish(topic, msg, options) {
     return this.mqtt.publish(`r/${this.robotId}/${topic}`, msg, options);
@@ -250,6 +339,54 @@ class RobotSession {
   publishProtobuf(topic, msg, options = null) {
     return this.publish(topic, msg.serializeBinary(), options);
   }
+
+  /**
+   * Registers a callback function to be called whenever a command
+   * for the robot is received.
+   *
+   * @param {function} callback will be called each time a message is received.
+   * It should have the following signature:
+   *
+   *   callback(commandName, arguments, options)
+   *
+   * @param {string} commandName identifies the specific command to be executed
+   *
+   * @param {array} arguments is an ordered list with each argument as an entry.
+   * Each element of the array can be a string or an object, depending on the
+   * definition of the action.
+   *
+   * @param {object} options includes:
+   *
+   * { resultFunction, progressFunction, metadata }
+   *
+   * @param {function} resultFunction can be called to report command execution
+   * result. It has the following signature:
+   *
+   *   resultFunction(returnCode)
+   *
+   * @param {function} progressFunction can be used to report command output
+   * and has the following signature:
+   *
+   *   progressFunction(output, error)
+   *
+   * @param {object} metadata is reserved for the future and will contains additional
+   * information about the received command request.
+   */
+  registerCommandCallback(callback) {
+    // Don't do anything if callback is not a valid function
+    if (!isFunction(callback)) {
+      return;
+    }
+    this.commandCallbacks.push(callback);
+    return this;
+  }
+
+  /**
+   * Unregisters the specified callback
+   */
+  unregisterCommandCallback(callback) {
+    // TODO(adamantivm) Implement
+  }
 }
 
 /**
@@ -367,6 +504,8 @@ export class InOrbit {
 
   #explicitConnect;
 
+  #commandCallbacks = [];
+
   /**
    * Initializes the InOrbit
    *
@@ -391,6 +530,13 @@ export class InOrbit {
   }
 
   /**
+   * Frees all resources and connections used by this InOrbit object
+   */
+  tearDown() {
+    this.sessionsPool.tearDown();
+  }
+
+  /**
    * Opens a connection associated to a robot and returns the session object.
    *
    * @see connectRobot
@@ -405,10 +551,13 @@ export class InOrbit {
   }
 
   /**
-   * Frees all resources and connections used by this InOrbit object
+   * Relays a command received from a robot session to all command callbacks
+   * registered by users.
+   *
+   * @see registerCommandCallback
    */
-  tearDown() {
-    this.sessionsPool.tearDown();
+  #dispatchCommand(...args) {
+    this.#commandCallbacks.forEach(c => c(...args));
   }
 
   /**
@@ -420,10 +569,16 @@ export class InOrbit {
    * @param {string} name Name of the robot. This name will be used as the robot's
    * name if it's the first time it connects to the platform.
    */
-  async connectRobot({ robotId, name = 'edge-sdk' }) {
+  connectRobot = async ({ robotId, name = 'edge-sdk' }) => {
     // Await fo the session creation. This assures that we have a valid connection
     // to the robot
-    await this.#sessionsPool.getSession({ robotId, name });
+    const session = await this.#sessionsPool.getSession({ robotId, name });
+    // Register ourselvs to be notified about command messages so that they can be
+    // relayed to callbacks registered by users to the SDK
+    session.registerCommandCallback((...args) => (
+      this.#dispatchCommand.apply(this, [robotId, ...args])
+    ));
+    return session;
   }
 
   /**
@@ -512,5 +667,49 @@ export class InOrbit {
   async publishPaths(robotId, paths) {
     const sess = await this.#getRobotSession({ robotId });
     return sess.publishPaths(paths);
+  }
+
+  /**
+   * Registers a callback function to be called whenever a command
+   * is received for any of the robots for which sessions are created
+   * now or later.
+   *
+   * @param {function} callback will be called each time a message is received.
+   * It should have the following signature:
+   *
+   *   callback(robotId, commandName, arguments, options)
+   *
+   * @param {string} robotId ID of the robot for which the command is intended
+   *
+   * @param {string} commandName identifies the specific command to be executed
+   *
+   * @param {array} arguments is an ordered list with each argument as an entry.
+   * Each element of the array can be a string or an object, depending on the
+   * definition of the action.
+   *
+   * @param {object} options includes:
+   *
+   * { resultFunction, progressFunction, metadata }
+   *
+   * @param {function} resultFunction can be called to report command execution
+   * result. It has the following signature:
+   *
+   *   resultFunction(returnCode)
+   *
+   * @param {function} progressFunction can be used to report command output
+   * and has the following signature:
+   *
+   *   progressFunction(output, error)
+   *
+   * @param {object} metadata is reserved for the future and will contains additional
+   * information about the received command request.
+   */
+  async registerCommandCallback(callback) {
+    if (!isFunction(callback)) {
+      // Don't do anything if callback is not a valid function
+      return;
+    }
+    this.#commandCallbacks.push(callback);
+    return this;
   }
 }

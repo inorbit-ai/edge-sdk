@@ -1,6 +1,6 @@
 {
   "name": "@inorbit/edge-sdk",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "InOrbit Edge SDK",
   "main": "dist/index.js",
   "author": "support@inorbit.ai",

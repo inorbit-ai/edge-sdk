@@ -63,6 +63,7 @@ class RobotSession {
     this.logger = settings.logger;
     this.commandCallbacks = [];
     this.#messageHandlers[MQTT_INITIAL_POSE] = this.#handleInitialPose;
+    this.#messageHandlers[MQTT_NAV_GOAL_GOAL] = this.#handleNavGoal;
   }
 
   /**
@@ -110,6 +111,7 @@ class RobotSession {
     // Subscribe to incoming topics
     // TODO(adamantivm) Perform lazy subscription, only when callbacks are registered
     this.subscribe(MQTT_INITIAL_POSE);
+    this.subscribe(MQTT_NAV_GOAL_GOAL);
 
     if (this.ended) {
       // In case this session was ended by end() while it was connecting
@@ -167,12 +169,26 @@ class RobotSession {
     const [seq, ts, x, y, theta] = message.toString().split("|");
     // Hand over to callback for processing, using the proper format
     this.#dispatchCommand(
-      'initialPose', // TODO(adamantivm) Document publicly
+      'initialPose',
       [{ x, y, theta }],
       seq // NOTE(adamantivm) Using seq as the execution ID
     );
   }
 
+  /**
+   * Internal method: handle incoming MQTT_NAV_GOAL_GOAL message
+   */
+  #handleNavGoal = (message) => {
+    // Decode incoming message
+    const [seq, ts, x, y, theta] = message.toString().split("|");
+    // Hand over to callback for processing, using the proper format
+    this.#dispatchCommand(
+      'navGoal',
+      [{ x, y, theta }],
+      seq // NOTE(adamantivm) Using seq as the execution ID
+    );
+  }
+  
   /**
    * Internal method: executes registered command callbacks for a specific incoming
    * command / action

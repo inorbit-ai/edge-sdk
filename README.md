@@ -1,10 +1,10 @@
-InOrbit Edge SDK
+# InOrbit Edge SDK
+
 ---
 
 The InOrbit Edge SDK allows Javascript programs to communicate with **InOrbit platform**
 on behalf of robots - providing robot data and handling robot actions.
-It's goal is to ease the integration between InOrbit and any other software that 
-handles robot data.
+It's goal is to ease the integration between InOrbit and any other software that handles robot data.
 
 This package can be installed using NPM as shown below:
 
@@ -59,3 +59,31 @@ available in InOrbit platform and can be queried via APIs or using InOrbit Contr
 
 You can extend this example to actually integrate your existing applications, including fleet manager systems,
 with InOrbit.
+
+## Support for callbacks
+
+The EdgeSDK provides a mechanism to register callback functions for handling InOrbit builtin commands.
+
+```javascript
+const sdk = new InOrbit({
+  apiKey: process.env.INORBIT_API_KEY,
+});
+
+// Initialize the robot connection
+await sdk.connectRobot({ robotId, name: 'robot0' });
+
+// Register a sample command callback function
+sdk.registerCommandCallback((robotId, commandName, args, options) => {
+    console.log('Received command! What should I do now?', {
+      commandName, args, options, robotId
+    });  
+  }
+);
+```
+
+### Supported commands
+
+- `navGoal`
+  - Arguments: `x`, `y`, `theta`
+- `initialPose`
+  - Arguments: `x`, `y`, `theta`

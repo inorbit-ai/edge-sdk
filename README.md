@@ -70,7 +70,7 @@ const sdk = new InOrbit({
 });
 
 // Initialize the robot connection
-await sdk.connectRobot({ robotId, name: 'robot0' });
+sdk.connectRobot({ robotId, name: 'robot0' });
 
 // Register a sample command callback function
 sdk.registerCommandCallback(async (robotId, commandName, args, options) => {

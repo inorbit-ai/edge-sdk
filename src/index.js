@@ -194,7 +194,7 @@ class RobotSession {
    * command / action
    */
   #dispatchCommand = (commandName, args, executionId) => {
-    // TODO(adaamantivm) try/catch block on each execution
+    // TODO(adamantivm) try/catch block on each execution
     this.commandCallbacks.forEach(c => {
       // Prepare report result function bound to the specific execution ID
       const resultFunction = (resultCode) => this.#reportCommandResult(executionId, resultCode);
@@ -586,14 +586,19 @@ export class InOrbit {
    * name if it's the first time it connects to the platform.
    */
   connectRobot = async ({ robotId, name = 'edge-sdk' }) => {
+    // The `connectRobot` method might be called multiple times. Only register
+    // callbacks for new robot sessions.
+    const shouldRegisterCallback = !this.#sessionsPool.hasRobot(robotId);
     // Await fo the session creation. This assures that we have a valid connection
     // to the robot
     const session = await this.#sessionsPool.getSession({ robotId, name });
-    // Register ourselvs to be notified about command messages so that they can be
+    // Register ourselves to be notified about command messages so that they can be
     // relayed to callbacks registered by users to the SDK
-    session.registerCommandCallback((...args) => (
-      this.#dispatchCommand.apply(this, [robotId, ...args])
-    ));
+    if (shouldRegisterCallback) {
+      session.registerCommandCallback((...args) => (
+        this.#dispatchCommand.apply(this, [robotId, ...args])
+      ));
+    }
     return session;
   }
 

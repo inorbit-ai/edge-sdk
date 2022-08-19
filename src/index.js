@@ -8,6 +8,7 @@
 import axios from 'axios';
 import mqtt from 'async-mqtt';
 import { isFunction } from 'lodash';
+import constants from './constants';
 import messages from './inorbit_pb';
 
 const EDGE_SDK_VERSION = '1.5.0';
@@ -172,7 +173,7 @@ class RobotSession {
     const [seq, ts, x, y, theta] = message.toString().split("|");
     // Hand over to callback for processing, using the proper format
     this.#dispatchCommand(
-      'initialPose',
+      constants.COMMAND_INITIAL_POSE,
       [{ x, y, theta }],
       seq // NOTE(adamantivm) Using seq as the execution ID
     );
@@ -186,7 +187,7 @@ class RobotSession {
     const [seq, ts, x, y, theta] = message.toString().split("|");
     // Hand over to callback for processing, using the proper format
     this.#dispatchCommand(
-      'navGoal',
+      constants.COMMAND_NAV_GOAL,
       [{ x, y, theta }],
       seq // NOTE(adamantivm) Using seq as the execution ID
     );
@@ -200,7 +201,7 @@ class RobotSession {
     const msg = new messages.CustomScriptCommandMessage.deserializeBinary(message);
     // Hand over to callback for processing, using the proper format
     this.#dispatchCommand(
-      'customCommand',
+      constants.COMMAND_CUSTOM_COMMAND,
       [
         msg.getFileName(),
         msg.getArgOptionsList()
@@ -233,7 +234,9 @@ class RobotSession {
     const msg = new messages.CustomScriptStatusMessage();
     msg.setFileName(args[0]);
     msg.setExecutionId(executionId);
-    msg.setExecutionStatus((resultCode === '0' ? 'finished' : 'aborted'));
+    msg.setExecutionStatus(
+      (resultCode === '0' ? constants.CUSTOM_COMMAND_STATUS_FINISHED : constants.CUSTOM_COMMAND_STATUS_ABORTED)
+    );
     msg.setReturnCode(resultCode);
     this.publishProtobuf(MQTT_SCRIPT_OUTPUT_TOPIC, msg);
   }
@@ -759,3 +762,5 @@ export class InOrbit {
     return this;
   }
 }
+
+export default constants;

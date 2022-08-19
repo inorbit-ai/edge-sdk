@@ -87,3 +87,14 @@ sdk.registerCommandCallback((robotId, commandName, args, options) => {
   - Arguments: `x`, `y`, `theta`
 - `initialPose`
   - Arguments: `x`, `y`, `theta`
+- `customCommand`
+  - Arguments: `scriptName`, `parametersArray`
+
+## Run example files
+
+```bash
+npm run build
+npm install .
+export INORBIT_API_KEY="APIKEY"
+npm run example
+```

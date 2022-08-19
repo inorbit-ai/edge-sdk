@@ -5,10 +5,15 @@
  * Copyright 2021 InOrbit, Inc.
  */
 
-import { InOrbit } from '@inorbit/edge-sdk';
+import { InOrbit } from '.';
+import constants from '.';
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function generateRobotId() {
+  return `edgesdk-example-${Math.random().toString(36).slice(2, 7)}`;
 }
 
 /**
@@ -20,8 +25,19 @@ function logCommand(robotId, commandName, args, options) {
   });
 }
 
+/**
+ * Dummy sample command callback function
+ */
+function customCommandCallback(robotId, commandName, args, options) {
+  if (commandName === constants.COMMAND_CUSTOM_COMMAND) {
+    console.log(`Received '${commandName}' for robot '${robotId}'!`, args);
+    // Return '0' for success
+    options.resultFunction('0');
+  }
+}
+
 async function main() {
-  const robotId = 'joxx4';
+  const robotId = generateRobotId();
   // Initialize the SDK reading the InOrbit API Key from the environment
   const sdk = new InOrbit({
     apiKey: process.env.INORBIT_API_KEY,
@@ -34,10 +50,11 @@ async function main() {
   });
 
   // Initialize the robot connection
-  await sdk.connectRobot({ robotId, name: 'robot0' });
+  await sdk.connectRobot({ robotId, name: 'edgesdk-example' });
 
   // Register a sample command callback function
   sdk.registerCommandCallback(logCommand);
+  sdk.registerCommandCallback(customCommandCallback);
 
   while (true) {
     // Publish Key-Values for battery and status

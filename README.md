@@ -92,9 +92,16 @@ sdk.registerCommandCallback((robotId, commandName, args, options) => {
 
 ## Run example files
 
+Two example files are located at repository root, namely `example.js` and `example-multi-robot.js`.
+
 ```bash
 npm run build
-npm install .
 export INORBIT_API_KEY="APIKEY"
 npm run example
+```
+
+Please note that they reference to the locally built `@inorbit/edge-sdk` package, but when installed through `npm install @inorbit/edge-sdk` it should be imported as:
+
+```javascript
+import { InOrbit } from '@inorbit/edge-sdk';
 ```

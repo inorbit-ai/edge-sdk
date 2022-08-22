@@ -8,9 +8,10 @@
 import axios from 'axios';
 import mqtt from 'async-mqtt';
 import { isFunction } from 'lodash';
+import constants from './constants';
 import messages from './inorbit_pb';
 
-const EDGE_SDK_VERSION = '0.3.0';
+const EDGE_SDK_VERSION = '1.5.0';
 const INORBIT_ENDPOINT_DEFAULT = 'https://control.inorbit.ai/cloud_sdk_robot_config';
 // Agent version reported when a robot connection is open using this SDK
 const AGENT_VERSION = `${EDGE_SDK_VERSION}.edgesdk`;
@@ -27,6 +28,7 @@ const MQTT_NAV_GOAL_MULTI = 'ros/loc/goal_path';
 const MQTT_INITIAL_POSE = 'ros/loc/set_pose';
 // custom commands
 const MQTT_CUSTOM_COMMAND = 'custom_command/script/command'
+const MQTT_SCRIPT_OUTPUT_TOPIC = 'custom_command/script/status'
 
 
 /**
@@ -64,6 +66,7 @@ class RobotSession {
     this.commandCallbacks = [];
     this.#messageHandlers[MQTT_INITIAL_POSE] = this.#handleInitialPose;
     this.#messageHandlers[MQTT_NAV_GOAL_GOAL] = this.#handleNavGoal;
+    this.#messageHandlers[MQTT_CUSTOM_COMMAND] = this.#handleCustomCommand;
   }
 
   /**
@@ -112,6 +115,7 @@ class RobotSession {
     // TODO(adamantivm) Perform lazy subscription, only when callbacks are registered
     this.subscribe(MQTT_INITIAL_POSE);
     this.subscribe(MQTT_NAV_GOAL_GOAL);
+    this.subscribe(MQTT_CUSTOM_COMMAND);
 
     if (this.ended) {
       // In case this session was ended by end() while it was connecting
@@ -169,7 +173,7 @@ class RobotSession {
     const [seq, ts, x, y, theta] = message.toString().split("|");
     // Hand over to callback for processing, using the proper format
     this.#dispatchCommand(
-      'initialPose',
+      constants.COMMAND_INITIAL_POSE,
       [{ x, y, theta }],
       seq // NOTE(adamantivm) Using seq as the execution ID
     );
@@ -183,12 +187,29 @@ class RobotSession {
     const [seq, ts, x, y, theta] = message.toString().split("|");
     // Hand over to callback for processing, using the proper format
     this.#dispatchCommand(
-      'navGoal',
+      constants.COMMAND_NAV_GOAL,
       [{ x, y, theta }],
       seq // NOTE(adamantivm) Using seq as the execution ID
     );
   }
-  
+
+  /**
+   * Internal method: handle incoming MQTT_CUSTOM_COMMAND message
+   */
+  #handleCustomCommand = (message) => {
+    // Decode incoming message
+    const msg = new messages.CustomScriptCommandMessage.deserializeBinary(message);
+    // Hand over to callback for processing, using the proper format
+    this.#dispatchCommand(
+      constants.COMMAND_CUSTOM_COMMAND,
+      [
+        msg.getFileName(),
+        msg.getArgOptionsList()
+      ],
+      msg.getExecutionId()
+    );
+  }
+
   /**
    * Internal method: executes registered command callbacks for a specific incoming
    * command / action
@@ -197,20 +218,27 @@ class RobotSession {
     // TODO(adamantivm) try/catch block on each execution
     this.commandCallbacks.forEach(c => {
       // Prepare report result function bound to the specific execution ID
-      const resultFunction = (resultCode) => this.#reportCommandResult(executionId, resultCode);
+      const resultFunction = (resultCode) => this.#reportCommandResult(args, executionId, resultCode);
       // TODO(adamantivm) Implement progress reporting function
-      const progressFunction = () => {};
+      const progressFunction = () => { };
       // Call the callback method
-      c(commandName, args, { resultFunction, progressFunction, metadata: {}});
+      c(commandName, args, { resultFunction, progressFunction, metadata: {} });
     });
   }
 
   /**
    * Internal method: conveys to the server the reported result of a command executed by a
-   * registered  user callback
+   * registered user callback
    */
-  #reportCommandResult = (executionId, resultCode) => {
-    // TODO(adamantivm) Implement
+  #reportCommandResult = (args, executionId, resultCode) => {
+    const msg = new messages.CustomScriptStatusMessage();
+    msg.setFileName(args[0]);
+    msg.setExecutionId(executionId);
+    msg.setExecutionStatus(
+      (resultCode === '0' ? constants.CUSTOM_COMMAND_STATUS_FINISHED : constants.CUSTOM_COMMAND_STATUS_ABORTED)
+    );
+    msg.setReturnCode(resultCode);
+    this.publishProtobuf(MQTT_SCRIPT_OUTPUT_TOPIC, msg);
   }
 
   /**
@@ -435,7 +463,7 @@ class RobotSessionFactory {
       robotId,
       name,
     },
-    this.robotSessionSettings);
+      this.robotSessionSettings);
   }
 }
 
@@ -734,3 +762,5 @@ export class InOrbit {
     return this;
   }
 }
+
+export default constants;

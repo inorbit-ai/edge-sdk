@@ -5,14 +5,18 @@
  * Copyright 2021 InOrbit, Inc.
  */
 
-import { InOrbit } from '@inorbit/edge-sdk';
+import { InOrbit } from '.';
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function generateRobotId() {
+  return `edgesdk-example-${Math.random().toString(36).slice(2, 7)}`;
+}
+
 async function main() {
-  const robots = ['robot0', 'robot1', 'robot2', 'robot3'];
+  const robots = [generateRobotId(), generateRobotId(), generateRobotId(), generateRobotId()];
 
   // Initialize the SDK reading the InOrbit API Key from the environment
   const sdk = new InOrbit({ apiKey: process.env.INORBIT_API_KEY });

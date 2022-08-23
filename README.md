@@ -105,3 +105,23 @@ Please note that they reference to the locally built `@inorbit/edge-sdk` package
 ```javascript
 import { InOrbit } from '@inorbit/edge-sdk';
 ```
+
+### Publishing this package to the NPM registry
+
+#### Requirements
+
+You must be a maintain of the [edge-sdk package](https://www.npmjs.com/package/@inorbit/edge-sdk/access)
+or have an access token that allows you to publish. You can get a token from any of the maintainers.
+
+If you use a token, remember to export the `NPM_TOKEN` environment variable (check [https://docs.npmjs.com/using-private-packages-in-a-ci-cd-workflow]).
+
+#### Publishing
+
+Before publishing check that the version in `package.json` is the right one. Then run these commands
+to publish the package:
+
+```
+npm i
+npm run-script build
+npm publish
+```

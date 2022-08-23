@@ -110,7 +110,7 @@ import { InOrbit } from '@inorbit/edge-sdk';
 
 #### Requirements
 
-You must be a maintain of the [edge-sdk package](https://www.npmjs.com/package/@inorbit/edge-sdk/access)
+You must be a maintainer of the [edge-sdk package](https://www.npmjs.com/package/@inorbit/edge-sdk/access)
 or have an access token that allows you to publish. You can get a token from any of the maintainers.
 
 If you use a token, remember to export the `NPM_TOKEN` environment variable (check [Using private packages in a CI/CD workflow](https://docs.npmjs.com/using-private-packages-in-a-ci-cd-workflow)).

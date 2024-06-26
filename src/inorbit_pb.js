@@ -1,9 +1,9 @@
 /**
- * InOrbit Edge SDK
- * 
- * Javascript interface to the InOrbit Robot Protocol.
- * 
- * Copyright 2021 InOrbit, Inc.
+ * @fileoverview
+ * @enhanceable
+ * @suppress {messageConventions} JS Compiler reports an error if a variable or
+ *     field starts with 'MSG_' and isn't a translatable message.
+ * @public
  */
 // GENERATED CODE -- DO NOT EDIT!
 
@@ -18,10 +18,13 @@ goog.exportSymbol('proto.inorbit.CustomDataMessage', null, global);
 goog.exportSymbol('proto.inorbit.CustomScriptCommandMessage', null, global);
 goog.exportSymbol('proto.inorbit.CustomScriptStatusMessage', null, global);
 goog.exportSymbol('proto.inorbit.DatabagUpdateMessage', null, global);
+goog.exportSymbol('proto.inorbit.DeltaIntArray', null, global);
+goog.exportSymbol('proto.inorbit.DeltaIntPathPoints', null, global);
 goog.exportSymbol('proto.inorbit.DiagnosticsMessage', null, global);
 goog.exportSymbol('proto.inorbit.DiskUsageMessage', null, global);
 goog.exportSymbol('proto.inorbit.Echo', null, global);
 goog.exportSymbol('proto.inorbit.FloatingPointList', null, global);
+goog.exportSymbol('proto.inorbit.GpsFixMessage', null, global);
 goog.exportSymbol('proto.inorbit.KeyValueCustomElement', null, global);
 goog.exportSymbol('proto.inorbit.KeyValueMessage', null, global);
 goog.exportSymbol('proto.inorbit.KeyValuePairs', null, global);
@@ -490,7 +493,9 @@ proto.inorbit.SystemStatsMessage.toObject = function(includeInstance, msg) {
     proto.inorbit.DiskUsageMessage.toObject, includeInstance),
     optionalNetworkInterfacesDataList: jspb.Message.toObjectList(msg.getOptionalNetworkInterfacesDataList(),
     proto.inorbit.NetworkStatsMessage.toObject, includeInstance),
-    ramUsagePercentage: +jspb.Message.getFieldWithDefault(msg, 17, 0.0)
+    ramUsagePercentage: +jspb.Message.getFieldWithDefault(msg, 17, 0.0),
+    mqttTx: jspb.Message.getFieldWithDefault(msg, 18, 0),
+    mqttRx: jspb.Message.getFieldWithDefault(msg, 19, 0)
   };
 
   if (includeInstance) {
@@ -584,6 +589,14 @@ proto.inorbit.SystemStatsMessage.deserializeBinaryFromReader = function(msg, rea
     case 17:
       var value = /** @type {number} */ (reader.readFloat());
       msg.setRamUsagePercentage(value);
+      break;
+    case 18:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setMqttTx(value);
+      break;
+    case 19:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setMqttRx(value);
       break;
     default:
       reader.skipField();
@@ -711,6 +724,20 @@ proto.inorbit.SystemStatsMessage.serializeBinaryToWriter = function(message, wri
   if (f !== 0.0) {
     writer.writeFloat(
       17,
+      f
+    );
+  }
+  f = message.getMqttTx();
+  if (f !== 0) {
+    writer.writeInt64(
+      18,
+      f
+    );
+  }
+  f = message.getMqttRx();
+  if (f !== 0) {
+    writer.writeInt64(
+      19,
       f
     );
   }
@@ -956,6 +983,36 @@ proto.inorbit.SystemStatsMessage.prototype.getRamUsagePercentage = function() {
 /** @param {number} value */
 proto.inorbit.SystemStatsMessage.prototype.setRamUsagePercentage = function(value) {
   jspb.Message.setProto3FloatField(this, 17, value);
+};
+
+
+/**
+ * optional int64 mqtt_tx = 18;
+ * @return {number}
+ */
+proto.inorbit.SystemStatsMessage.prototype.getMqttTx = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 18, 0));
+};
+
+
+/** @param {number} value */
+proto.inorbit.SystemStatsMessage.prototype.setMqttTx = function(value) {
+  jspb.Message.setProto3IntField(this, 18, value);
+};
+
+
+/**
+ * optional int64 mqtt_rx = 19;
+ * @return {number}
+ */
+proto.inorbit.SystemStatsMessage.prototype.getMqttRx = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 19, 0));
+};
+
+
+/** @param {number} value */
+proto.inorbit.SystemStatsMessage.prototype.setMqttRx = function(value) {
+  jspb.Message.setProto3IntField(this, 19, value);
 };
 
 
@@ -1445,6 +1502,236 @@ proto.inorbit.PathPoint.prototype.setY = function(value) {
  * @extends {jspb.Message}
  * @constructor
  */
+proto.inorbit.DeltaIntPathPoints = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.inorbit.DeltaIntPathPoints, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.inorbit.DeltaIntPathPoints.displayName = 'proto.inorbit.DeltaIntPathPoints';
+}
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.inorbit.DeltaIntPathPoints.prototype.toObject = function(opt_includeInstance) {
+  return proto.inorbit.DeltaIntPathPoints.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.inorbit.DeltaIntPathPoints} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.inorbit.DeltaIntPathPoints.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    xs: (f = msg.getXs()) && proto.inorbit.DeltaIntArray.toObject(includeInstance, f),
+    ys: (f = msg.getYs()) && proto.inorbit.DeltaIntArray.toObject(includeInstance, f),
+    maxBits: jspb.Message.getFieldWithDefault(msg, 3, 0)
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.inorbit.DeltaIntPathPoints}
+ */
+proto.inorbit.DeltaIntPathPoints.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.inorbit.DeltaIntPathPoints;
+  return proto.inorbit.DeltaIntPathPoints.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.inorbit.DeltaIntPathPoints} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.inorbit.DeltaIntPathPoints}
+ */
+proto.inorbit.DeltaIntPathPoints.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = new proto.inorbit.DeltaIntArray;
+      reader.readMessage(value,proto.inorbit.DeltaIntArray.deserializeBinaryFromReader);
+      msg.setXs(value);
+      break;
+    case 2:
+      var value = new proto.inorbit.DeltaIntArray;
+      reader.readMessage(value,proto.inorbit.DeltaIntArray.deserializeBinaryFromReader);
+      msg.setYs(value);
+      break;
+    case 3:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setMaxBits(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.inorbit.DeltaIntPathPoints.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.inorbit.DeltaIntPathPoints.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.inorbit.DeltaIntPathPoints} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.inorbit.DeltaIntPathPoints.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getXs();
+  if (f != null) {
+    writer.writeMessage(
+      1,
+      f,
+      proto.inorbit.DeltaIntArray.serializeBinaryToWriter
+    );
+  }
+  f = message.getYs();
+  if (f != null) {
+    writer.writeMessage(
+      2,
+      f,
+      proto.inorbit.DeltaIntArray.serializeBinaryToWriter
+    );
+  }
+  f = message.getMaxBits();
+  if (f !== 0) {
+    writer.writeInt32(
+      3,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional DeltaIntArray xs = 1;
+ * @return {?proto.inorbit.DeltaIntArray}
+ */
+proto.inorbit.DeltaIntPathPoints.prototype.getXs = function() {
+  return /** @type{?proto.inorbit.DeltaIntArray} */ (
+    jspb.Message.getWrapperField(this, proto.inorbit.DeltaIntArray, 1));
+};
+
+
+/** @param {?proto.inorbit.DeltaIntArray|undefined} value */
+proto.inorbit.DeltaIntPathPoints.prototype.setXs = function(value) {
+  jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+proto.inorbit.DeltaIntPathPoints.prototype.clearXs = function() {
+  this.setXs(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {!boolean}
+ */
+proto.inorbit.DeltaIntPathPoints.prototype.hasXs = function() {
+  return jspb.Message.getField(this, 1) != null;
+};
+
+
+/**
+ * optional DeltaIntArray ys = 2;
+ * @return {?proto.inorbit.DeltaIntArray}
+ */
+proto.inorbit.DeltaIntPathPoints.prototype.getYs = function() {
+  return /** @type{?proto.inorbit.DeltaIntArray} */ (
+    jspb.Message.getWrapperField(this, proto.inorbit.DeltaIntArray, 2));
+};
+
+
+/** @param {?proto.inorbit.DeltaIntArray|undefined} value */
+proto.inorbit.DeltaIntPathPoints.prototype.setYs = function(value) {
+  jspb.Message.setWrapperField(this, 2, value);
+};
+
+
+proto.inorbit.DeltaIntPathPoints.prototype.clearYs = function() {
+  this.setYs(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {!boolean}
+ */
+proto.inorbit.DeltaIntPathPoints.prototype.hasYs = function() {
+  return jspb.Message.getField(this, 2) != null;
+};
+
+
+/**
+ * optional int32 max_bits = 3;
+ * @return {number}
+ */
+proto.inorbit.DeltaIntPathPoints.prototype.getMaxBits = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/** @param {number} value */
+proto.inorbit.DeltaIntPathPoints.prototype.setMaxBits = function(value) {
+  jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
 proto.inorbit.RobotPath = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, proto.inorbit.RobotPath.repeatedFields_, null);
 };
@@ -1491,7 +1778,10 @@ proto.inorbit.RobotPath.toObject = function(includeInstance, msg) {
     pointsList: jspb.Message.toObjectList(msg.getPointsList(),
     proto.inorbit.PathPoint.toObject, includeInstance),
     ts: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    pathId: jspb.Message.getFieldWithDefault(msg, 3, "")
+    pathId: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    frameId: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    encodingVersion: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    encodedPoints: (f = msg.getEncodedPoints()) && proto.inorbit.DeltaIntPathPoints.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1540,6 +1830,19 @@ proto.inorbit.RobotPath.deserializeBinaryFromReader = function(msg, reader) {
     case 3:
       var value = /** @type {string} */ (reader.readString());
       msg.setPathId(value);
+      break;
+    case 4:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setFrameId(value);
+      break;
+    case 5:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setEncodingVersion(value);
+      break;
+    case 6:
+      var value = new proto.inorbit.DeltaIntPathPoints;
+      reader.readMessage(value,proto.inorbit.DeltaIntPathPoints.deserializeBinaryFromReader);
+      msg.setEncodedPoints(value);
       break;
     default:
       reader.skipField();
@@ -1590,6 +1893,28 @@ proto.inorbit.RobotPath.serializeBinaryToWriter = function(message, writer) {
     writer.writeString(
       3,
       f
+    );
+  }
+  f = message.getFrameId();
+  if (f.length > 0) {
+    writer.writeString(
+      4,
+      f
+    );
+  }
+  f = message.getEncodingVersion();
+  if (f !== 0) {
+    writer.writeInt32(
+      5,
+      f
+    );
+  }
+  f = message.getEncodedPoints();
+  if (f != null) {
+    writer.writeMessage(
+      6,
+      f,
+      proto.inorbit.DeltaIntPathPoints.serializeBinaryToWriter
     );
   }
 };
@@ -1653,6 +1978,312 @@ proto.inorbit.RobotPath.prototype.getPathId = function() {
 /** @param {string} value */
 proto.inorbit.RobotPath.prototype.setPathId = function(value) {
   jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional string frame_id = 4;
+ * @return {string}
+ */
+proto.inorbit.RobotPath.prototype.getFrameId = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/** @param {string} value */
+proto.inorbit.RobotPath.prototype.setFrameId = function(value) {
+  jspb.Message.setProto3StringField(this, 4, value);
+};
+
+
+/**
+ * optional int32 encoding_version = 5;
+ * @return {number}
+ */
+proto.inorbit.RobotPath.prototype.getEncodingVersion = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/** @param {number} value */
+proto.inorbit.RobotPath.prototype.setEncodingVersion = function(value) {
+  jspb.Message.setProto3IntField(this, 5, value);
+};
+
+
+/**
+ * optional DeltaIntPathPoints encoded_points = 6;
+ * @return {?proto.inorbit.DeltaIntPathPoints}
+ */
+proto.inorbit.RobotPath.prototype.getEncodedPoints = function() {
+  return /** @type{?proto.inorbit.DeltaIntPathPoints} */ (
+    jspb.Message.getWrapperField(this, proto.inorbit.DeltaIntPathPoints, 6));
+};
+
+
+/** @param {?proto.inorbit.DeltaIntPathPoints|undefined} value */
+proto.inorbit.RobotPath.prototype.setEncodedPoints = function(value) {
+  jspb.Message.setWrapperField(this, 6, value);
+};
+
+
+proto.inorbit.RobotPath.prototype.clearEncodedPoints = function() {
+  this.setEncodedPoints(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {!boolean}
+ */
+proto.inorbit.RobotPath.prototype.hasEncodedPoints = function() {
+  return jspb.Message.getField(this, 6) != null;
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.inorbit.DeltaIntArray = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.inorbit.DeltaIntArray.repeatedFields_, null);
+};
+goog.inherits(proto.inorbit.DeltaIntArray, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.inorbit.DeltaIntArray.displayName = 'proto.inorbit.DeltaIntArray';
+}
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.inorbit.DeltaIntArray.repeatedFields_ = [3];
+
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.inorbit.DeltaIntArray.prototype.toObject = function(opt_includeInstance) {
+  return proto.inorbit.DeltaIntArray.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.inorbit.DeltaIntArray} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.inorbit.DeltaIntArray.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    anchor: +jspb.Message.getFieldWithDefault(msg, 1, 0.0),
+    exponent: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    deltasList: jspb.Message.getRepeatedField(msg, 3),
+    statsMap: (f = msg.getStatsMap()) ? f.toObject(includeInstance, undefined) : []
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.inorbit.DeltaIntArray}
+ */
+proto.inorbit.DeltaIntArray.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.inorbit.DeltaIntArray;
+  return proto.inorbit.DeltaIntArray.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.inorbit.DeltaIntArray} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.inorbit.DeltaIntArray}
+ */
+proto.inorbit.DeltaIntArray.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {number} */ (reader.readFloat());
+      msg.setAnchor(value);
+      break;
+    case 2:
+      var value = /** @type {number} */ (reader.readSint32());
+      msg.setExponent(value);
+      break;
+    case 3:
+      var value = /** @type {!Array.<number>} */ (reader.readPackedSint32());
+      msg.setDeltasList(value);
+      break;
+    case 4:
+      var value = msg.getStatsMap();
+      reader.readMessage(value, function(message, reader) {
+        jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readString, jspb.BinaryReader.prototype.readFloat);
+         });
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.inorbit.DeltaIntArray.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.inorbit.DeltaIntArray.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.inorbit.DeltaIntArray} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.inorbit.DeltaIntArray.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getAnchor();
+  if (f !== 0.0) {
+    writer.writeFloat(
+      1,
+      f
+    );
+  }
+  f = message.getExponent();
+  if (f !== 0) {
+    writer.writeSint32(
+      2,
+      f
+    );
+  }
+  f = message.getDeltasList();
+  if (f.length > 0) {
+    writer.writePackedSint32(
+      3,
+      f
+    );
+  }
+  f = message.getStatsMap(true);
+  if (f && f.getLength() > 0) {
+    f.serializeBinary(4, writer, jspb.BinaryWriter.prototype.writeString, jspb.BinaryWriter.prototype.writeFloat);
+  }
+};
+
+
+/**
+ * optional float anchor = 1;
+ * @return {number}
+ */
+proto.inorbit.DeltaIntArray.prototype.getAnchor = function() {
+  return /** @type {number} */ (+jspb.Message.getFieldWithDefault(this, 1, 0.0));
+};
+
+
+/** @param {number} value */
+proto.inorbit.DeltaIntArray.prototype.setAnchor = function(value) {
+  jspb.Message.setProto3FloatField(this, 1, value);
+};
+
+
+/**
+ * optional sint32 exponent = 2;
+ * @return {number}
+ */
+proto.inorbit.DeltaIntArray.prototype.getExponent = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/** @param {number} value */
+proto.inorbit.DeltaIntArray.prototype.setExponent = function(value) {
+  jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * repeated sint32 deltas = 3;
+ * @return {!Array.<number>}
+ */
+proto.inorbit.DeltaIntArray.prototype.getDeltasList = function() {
+  return /** @type {!Array.<number>} */ (jspb.Message.getRepeatedField(this, 3));
+};
+
+
+/** @param {!Array.<number>} value */
+proto.inorbit.DeltaIntArray.prototype.setDeltasList = function(value) {
+  jspb.Message.setField(this, 3, value || []);
+};
+
+
+/**
+ * @param {!number} value
+ * @param {number=} opt_index
+ */
+proto.inorbit.DeltaIntArray.prototype.addDeltas = function(value, opt_index) {
+  jspb.Message.addToRepeatedField(this, 3, value, opt_index);
+};
+
+
+proto.inorbit.DeltaIntArray.prototype.clearDeltasList = function() {
+  this.setDeltasList([]);
+};
+
+
+/**
+ * map<string, float> stats = 4;
+ * @param {boolean=} opt_noLazyCreate Do not create the map if
+ * empty, instead returning `undefined`
+ * @return {!jspb.Map<string,number>}
+ */
+proto.inorbit.DeltaIntArray.prototype.getStatsMap = function(opt_noLazyCreate) {
+  return /** @type {!jspb.Map<string,number>} */ (
+      jspb.Message.getMapField(this, 4, opt_noLazyCreate,
+      null));
+};
+
+
+proto.inorbit.DeltaIntArray.prototype.clearStatsMap = function() {
+  this.getStatsMap().clear();
 };
 
 
@@ -1953,7 +2584,10 @@ proto.inorbit.MapMessage.toObject = function(includeInstance, msg) {
     resolution: +jspb.Message.getFieldWithDefault(msg, 7, 0.0),
     ts: jspb.Message.getFieldWithDefault(msg, 8, 0),
     label: jspb.Message.getFieldWithDefault(msg, 9, ""),
-    dataHash: jspb.Message.getFieldWithDefault(msg, 10, 0)
+    dataHash: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    frameId: jspb.Message.getFieldWithDefault(msg, 11, ""),
+    mapId: jspb.Message.getFieldWithDefault(msg, 12, ""),
+    isUpdate: jspb.Message.getFieldWithDefault(msg, 13, false)
   };
 
   if (includeInstance) {
@@ -2029,6 +2663,18 @@ proto.inorbit.MapMessage.deserializeBinaryFromReader = function(msg, reader) {
     case 10:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setDataHash(value);
+      break;
+    case 11:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setFrameId(value);
+      break;
+    case 12:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setMapId(value);
+      break;
+    case 13:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setIsUpdate(value);
       break;
     default:
       reader.skipField();
@@ -2126,6 +2772,27 @@ proto.inorbit.MapMessage.serializeBinaryToWriter = function(message, writer) {
   if (f !== 0) {
     writer.writeInt64(
       10,
+      f
+    );
+  }
+  f = message.getFrameId();
+  if (f.length > 0) {
+    writer.writeString(
+      11,
+      f
+    );
+  }
+  f = message.getMapId();
+  if (f.length > 0) {
+    writer.writeString(
+      12,
+      f
+    );
+  }
+  f = message.getIsUpdate();
+  if (f) {
+    writer.writeBool(
+      13,
       f
     );
   }
@@ -2303,6 +2970,53 @@ proto.inorbit.MapMessage.prototype.getDataHash = function() {
 /** @param {number} value */
 proto.inorbit.MapMessage.prototype.setDataHash = function(value) {
   jspb.Message.setProto3IntField(this, 10, value);
+};
+
+
+/**
+ * optional string frame_id = 11;
+ * @return {string}
+ */
+proto.inorbit.MapMessage.prototype.getFrameId = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 11, ""));
+};
+
+
+/** @param {string} value */
+proto.inorbit.MapMessage.prototype.setFrameId = function(value) {
+  jspb.Message.setProto3StringField(this, 11, value);
+};
+
+
+/**
+ * optional string map_id = 12;
+ * @return {string}
+ */
+proto.inorbit.MapMessage.prototype.getMapId = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 12, ""));
+};
+
+
+/** @param {string} value */
+proto.inorbit.MapMessage.prototype.setMapId = function(value) {
+  jspb.Message.setProto3StringField(this, 12, value);
+};
+
+
+/**
+ * optional bool is_update = 13;
+ * Note that Boolean fields may be set to 0/1 when serialized from a Java server.
+ * You should avoid comparisons like {@code val === true/false} in those cases.
+ * @return {boolean}
+ */
+proto.inorbit.MapMessage.prototype.getIsUpdate = function() {
+  return /** @type {boolean} */ (jspb.Message.getFieldWithDefault(this, 13, false));
+};
+
+
+/** @param {boolean} value */
+proto.inorbit.MapMessage.prototype.setIsUpdate = function(value) {
+  jspb.Message.setProto3BooleanField(this, 13, value);
 };
 
 
@@ -4743,8 +5457,11 @@ proto.inorbit.LocationAndPoseMessage.toObject = function(includeInstance, msg) {
     posX: +jspb.Message.getFieldWithDefault(msg, 2, 0.0),
     posY: +jspb.Message.getFieldWithDefault(msg, 3, 0.0),
     yaw: +jspb.Message.getFieldWithDefault(msg, 4, 0.0),
+    frameId: jspb.Message.getFieldWithDefault(msg, 6, ""),
     lasersList: jspb.Message.toObjectList(msg.getLasersList(),
-    proto.inorbit.LaserMessage.toObject, includeInstance)
+    proto.inorbit.LaserMessage.toObject, includeInstance),
+    offsetX: +jspb.Message.getFieldWithDefault(msg, 7, 0.0),
+    offsetY: +jspb.Message.getFieldWithDefault(msg, 8, 0.0)
   };
 
   if (includeInstance) {
@@ -4797,10 +5514,22 @@ proto.inorbit.LocationAndPoseMessage.deserializeBinaryFromReader = function(msg,
       var value = /** @type {number} */ (reader.readFloat());
       msg.setYaw(value);
       break;
+    case 6:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setFrameId(value);
+      break;
     case 5:
       var value = new proto.inorbit.LaserMessage;
       reader.readMessage(value,proto.inorbit.LaserMessage.deserializeBinaryFromReader);
       msg.addLasers(value);
+      break;
+    case 7:
+      var value = /** @type {number} */ (reader.readFloat());
+      msg.setOffsetX(value);
+      break;
+    case 8:
+      var value = /** @type {number} */ (reader.readFloat());
+      msg.setOffsetY(value);
       break;
     default:
       reader.skipField();
@@ -4859,12 +5588,33 @@ proto.inorbit.LocationAndPoseMessage.serializeBinaryToWriter = function(message,
       f
     );
   }
+  f = message.getFrameId();
+  if (f.length > 0) {
+    writer.writeString(
+      6,
+      f
+    );
+  }
   f = message.getLasersList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
       5,
       f,
       proto.inorbit.LaserMessage.serializeBinaryToWriter
+    );
+  }
+  f = message.getOffsetX();
+  if (f !== 0.0) {
+    writer.writeFloat(
+      7,
+      f
+    );
+  }
+  f = message.getOffsetY();
+  if (f !== 0.0) {
+    writer.writeFloat(
+      8,
+      f
     );
   }
 };
@@ -4931,6 +5681,21 @@ proto.inorbit.LocationAndPoseMessage.prototype.setYaw = function(value) {
 
 
 /**
+ * optional string frame_id = 6;
+ * @return {string}
+ */
+proto.inorbit.LocationAndPoseMessage.prototype.getFrameId = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+};
+
+
+/** @param {string} value */
+proto.inorbit.LocationAndPoseMessage.prototype.setFrameId = function(value) {
+  jspb.Message.setProto3StringField(this, 6, value);
+};
+
+
+/**
  * repeated LaserMessage lasers = 5;
  * @return {!Array.<!proto.inorbit.LaserMessage>}
  */
@@ -4958,6 +5723,36 @@ proto.inorbit.LocationAndPoseMessage.prototype.addLasers = function(opt_value, o
 
 proto.inorbit.LocationAndPoseMessage.prototype.clearLasersList = function() {
   this.setLasersList([]);
+};
+
+
+/**
+ * optional float offset_x = 7;
+ * @return {number}
+ */
+proto.inorbit.LocationAndPoseMessage.prototype.getOffsetX = function() {
+  return /** @type {number} */ (+jspb.Message.getFieldWithDefault(this, 7, 0.0));
+};
+
+
+/** @param {number} value */
+proto.inorbit.LocationAndPoseMessage.prototype.setOffsetX = function(value) {
+  jspb.Message.setProto3FloatField(this, 7, value);
+};
+
+
+/**
+ * optional float offset_y = 8;
+ * @return {number}
+ */
+proto.inorbit.LocationAndPoseMessage.prototype.getOffsetY = function() {
+  return /** @type {number} */ (+jspb.Message.getFieldWithDefault(this, 8, 0.0));
+};
+
+
+/** @param {number} value */
+proto.inorbit.LocationAndPoseMessage.prototype.setOffsetY = function(value) {
+  jspb.Message.setProto3FloatField(this, 8, value);
 };
 
 
@@ -5179,7 +5974,10 @@ proto.inorbit.PoseMessageData.toObject = function(includeInstance, msg) {
     ts: jspb.Message.getFieldWithDefault(msg, 1, 0),
     posX: +jspb.Message.getFieldWithDefault(msg, 2, 0.0),
     posY: +jspb.Message.getFieldWithDefault(msg, 3, 0.0),
-    yaw: +jspb.Message.getFieldWithDefault(msg, 4, 0.0)
+    yaw: +jspb.Message.getFieldWithDefault(msg, 4, 0.0),
+    frameId: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    offsetX: +jspb.Message.getFieldWithDefault(msg, 6, 0.0),
+    offsetY: +jspb.Message.getFieldWithDefault(msg, 7, 0.0)
   };
 
   if (includeInstance) {
@@ -5231,6 +6029,18 @@ proto.inorbit.PoseMessageData.deserializeBinaryFromReader = function(msg, reader
     case 4:
       var value = /** @type {number} */ (reader.readFloat());
       msg.setYaw(value);
+      break;
+    case 5:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setFrameId(value);
+      break;
+    case 6:
+      var value = /** @type {number} */ (reader.readFloat());
+      msg.setOffsetX(value);
+      break;
+    case 7:
+      var value = /** @type {number} */ (reader.readFloat());
+      msg.setOffsetY(value);
       break;
     default:
       reader.skipField();
@@ -5286,6 +6096,27 @@ proto.inorbit.PoseMessageData.serializeBinaryToWriter = function(message, writer
   if (f !== 0.0) {
     writer.writeFloat(
       4,
+      f
+    );
+  }
+  f = message.getFrameId();
+  if (f.length > 0) {
+    writer.writeString(
+      5,
+      f
+    );
+  }
+  f = message.getOffsetX();
+  if (f !== 0.0) {
+    writer.writeFloat(
+      6,
+      f
+    );
+  }
+  f = message.getOffsetY();
+  if (f !== 0.0) {
+    writer.writeFloat(
+      7,
       f
     );
   }
@@ -5349,6 +6180,51 @@ proto.inorbit.PoseMessageData.prototype.getYaw = function() {
 /** @param {number} value */
 proto.inorbit.PoseMessageData.prototype.setYaw = function(value) {
   jspb.Message.setProto3FloatField(this, 4, value);
+};
+
+
+/**
+ * optional string frame_id = 5;
+ * @return {string}
+ */
+proto.inorbit.PoseMessageData.prototype.getFrameId = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+};
+
+
+/** @param {string} value */
+proto.inorbit.PoseMessageData.prototype.setFrameId = function(value) {
+  jspb.Message.setProto3StringField(this, 5, value);
+};
+
+
+/**
+ * optional float offset_x = 6;
+ * @return {number}
+ */
+proto.inorbit.PoseMessageData.prototype.getOffsetX = function() {
+  return /** @type {number} */ (+jspb.Message.getFieldWithDefault(this, 6, 0.0));
+};
+
+
+/** @param {number} value */
+proto.inorbit.PoseMessageData.prototype.setOffsetX = function(value) {
+  jspb.Message.setProto3FloatField(this, 6, value);
+};
+
+
+/**
+ * optional float offset_y = 7;
+ * @return {number}
+ */
+proto.inorbit.PoseMessageData.prototype.getOffsetY = function() {
+  return /** @type {number} */ (+jspb.Message.getFieldWithDefault(this, 7, 0.0));
+};
+
+
+/** @param {number} value */
+proto.inorbit.PoseMessageData.prototype.setOffsetY = function(value) {
+  jspb.Message.setProto3FloatField(this, 7, value);
 };
 
 
@@ -7017,7 +7893,8 @@ proto.inorbit.CustomDataMessage.toObject = function(includeInstance, msg) {
     imagePayload: msg.getImagePayload_asB64(),
     textFilePayload: msg.getTextFilePayload_asB64(),
     diagnosticsPayload: (f = msg.getDiagnosticsPayload()) && proto.inorbit.DiagnosticsMessage.toObject(includeInstance, f),
-    textFilePayload2: (f = msg.getTextFilePayload2()) && proto.inorbit.TextFileMessage.toObject(includeInstance, f)
+    textFilePayload2: (f = msg.getTextFilePayload2()) && proto.inorbit.TextFileMessage.toObject(includeInstance, f),
+    ts: jspb.Message.getFieldWithDefault(msg, 7, 0)
   };
 
   if (includeInstance) {
@@ -7080,6 +7957,10 @@ proto.inorbit.CustomDataMessage.deserializeBinaryFromReader = function(msg, read
       var value = new proto.inorbit.TextFileMessage;
       reader.readMessage(value,proto.inorbit.TextFileMessage.deserializeBinaryFromReader);
       msg.setTextFilePayload2(value);
+      break;
+    case 7:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setTs(value);
       break;
     default:
       reader.skipField();
@@ -7153,6 +8034,13 @@ proto.inorbit.CustomDataMessage.serializeBinaryToWriter = function(message, writ
       6,
       f,
       proto.inorbit.TextFileMessage.serializeBinaryToWriter
+    );
+  }
+  f = message.getTs();
+  if (f !== 0) {
+    writer.writeInt64(
+      7,
+      f
     );
   }
 };
@@ -7366,6 +8254,21 @@ proto.inorbit.CustomDataMessage.prototype.clearTextFilePayload2 = function() {
  */
 proto.inorbit.CustomDataMessage.prototype.hasTextFilePayload2 = function() {
   return jspb.Message.getField(this, 6) != null;
+};
+
+
+/**
+ * optional int64 ts = 7;
+ * @return {number}
+ */
+proto.inorbit.CustomDataMessage.prototype.getTs = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
+};
+
+
+/** @param {number} value */
+proto.inorbit.CustomDataMessage.prototype.setTs = function(value) {
+  jspb.Message.setProto3IntField(this, 7, value);
 };
 
 
@@ -10878,6 +11781,368 @@ proto.inorbit.ModuleStateOptionsMessage.prototype.addStateOptions = function(opt
 
 proto.inorbit.ModuleStateOptionsMessage.prototype.clearStateOptionsList = function() {
   this.setStateOptionsList([]);
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.inorbit.GpsFixMessage = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.inorbit.GpsFixMessage, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.inorbit.GpsFixMessage.displayName = 'proto.inorbit.GpsFixMessage';
+}
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.inorbit.GpsFixMessage.prototype.toObject = function(opt_includeInstance) {
+  return proto.inorbit.GpsFixMessage.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.inorbit.GpsFixMessage} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.inorbit.GpsFixMessage.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    ts: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    latitude: +jspb.Message.getFieldWithDefault(msg, 2, 0.0),
+    longitude: +jspb.Message.getFieldWithDefault(msg, 3, 0.0),
+    altitude: +jspb.Message.getFieldWithDefault(msg, 4, 0.0),
+    bearing: +jspb.Message.getFieldWithDefault(msg, 5, 0.0),
+    hasBearing: jspb.Message.getFieldWithDefault(msg, 6, false),
+    hasAccuracy: jspb.Message.getFieldWithDefault(msg, 7, false),
+    accuracyMeters: +jspb.Message.getFieldWithDefault(msg, 8, 0.0),
+    frameId: jspb.Message.getFieldWithDefault(msg, 9, "")
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.inorbit.GpsFixMessage}
+ */
+proto.inorbit.GpsFixMessage.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.inorbit.GpsFixMessage;
+  return proto.inorbit.GpsFixMessage.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.inorbit.GpsFixMessage} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.inorbit.GpsFixMessage}
+ */
+proto.inorbit.GpsFixMessage.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setTs(value);
+      break;
+    case 2:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setLatitude(value);
+      break;
+    case 3:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setLongitude(value);
+      break;
+    case 4:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setAltitude(value);
+      break;
+    case 5:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setBearing(value);
+      break;
+    case 6:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setHasBearing(value);
+      break;
+    case 7:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setHasAccuracy(value);
+      break;
+    case 8:
+      var value = /** @type {number} */ (reader.readFloat());
+      msg.setAccuracyMeters(value);
+      break;
+    case 9:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setFrameId(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.inorbit.GpsFixMessage.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.inorbit.GpsFixMessage.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.inorbit.GpsFixMessage} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.inorbit.GpsFixMessage.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getTs();
+  if (f !== 0) {
+    writer.writeInt64(
+      1,
+      f
+    );
+  }
+  f = message.getLatitude();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      2,
+      f
+    );
+  }
+  f = message.getLongitude();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      3,
+      f
+    );
+  }
+  f = message.getAltitude();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      4,
+      f
+    );
+  }
+  f = message.getBearing();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      5,
+      f
+    );
+  }
+  f = message.getHasBearing();
+  if (f) {
+    writer.writeBool(
+      6,
+      f
+    );
+  }
+  f = message.getHasAccuracy();
+  if (f) {
+    writer.writeBool(
+      7,
+      f
+    );
+  }
+  f = message.getAccuracyMeters();
+  if (f !== 0.0) {
+    writer.writeFloat(
+      8,
+      f
+    );
+  }
+  f = message.getFrameId();
+  if (f.length > 0) {
+    writer.writeString(
+      9,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional int64 ts = 1;
+ * @return {number}
+ */
+proto.inorbit.GpsFixMessage.prototype.getTs = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/** @param {number} value */
+proto.inorbit.GpsFixMessage.prototype.setTs = function(value) {
+  jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional double latitude = 2;
+ * @return {number}
+ */
+proto.inorbit.GpsFixMessage.prototype.getLatitude = function() {
+  return /** @type {number} */ (+jspb.Message.getFieldWithDefault(this, 2, 0.0));
+};
+
+
+/** @param {number} value */
+proto.inorbit.GpsFixMessage.prototype.setLatitude = function(value) {
+  jspb.Message.setProto3FloatField(this, 2, value);
+};
+
+
+/**
+ * optional double longitude = 3;
+ * @return {number}
+ */
+proto.inorbit.GpsFixMessage.prototype.getLongitude = function() {
+  return /** @type {number} */ (+jspb.Message.getFieldWithDefault(this, 3, 0.0));
+};
+
+
+/** @param {number} value */
+proto.inorbit.GpsFixMessage.prototype.setLongitude = function(value) {
+  jspb.Message.setProto3FloatField(this, 3, value);
+};
+
+
+/**
+ * optional double altitude = 4;
+ * @return {number}
+ */
+proto.inorbit.GpsFixMessage.prototype.getAltitude = function() {
+  return /** @type {number} */ (+jspb.Message.getFieldWithDefault(this, 4, 0.0));
+};
+
+
+/** @param {number} value */
+proto.inorbit.GpsFixMessage.prototype.setAltitude = function(value) {
+  jspb.Message.setProto3FloatField(this, 4, value);
+};
+
+
+/**
+ * optional double bearing = 5;
+ * @return {number}
+ */
+proto.inorbit.GpsFixMessage.prototype.getBearing = function() {
+  return /** @type {number} */ (+jspb.Message.getFieldWithDefault(this, 5, 0.0));
+};
+
+
+/** @param {number} value */
+proto.inorbit.GpsFixMessage.prototype.setBearing = function(value) {
+  jspb.Message.setProto3FloatField(this, 5, value);
+};
+
+
+/**
+ * optional bool has_bearing = 6;
+ * Note that Boolean fields may be set to 0/1 when serialized from a Java server.
+ * You should avoid comparisons like {@code val === true/false} in those cases.
+ * @return {boolean}
+ */
+proto.inorbit.GpsFixMessage.prototype.getHasBearing = function() {
+  return /** @type {boolean} */ (jspb.Message.getFieldWithDefault(this, 6, false));
+};
+
+
+/** @param {boolean} value */
+proto.inorbit.GpsFixMessage.prototype.setHasBearing = function(value) {
+  jspb.Message.setProto3BooleanField(this, 6, value);
+};
+
+
+/**
+ * optional bool has_accuracy = 7;
+ * Note that Boolean fields may be set to 0/1 when serialized from a Java server.
+ * You should avoid comparisons like {@code val === true/false} in those cases.
+ * @return {boolean}
+ */
+proto.inorbit.GpsFixMessage.prototype.getHasAccuracy = function() {
+  return /** @type {boolean} */ (jspb.Message.getFieldWithDefault(this, 7, false));
+};
+
+
+/** @param {boolean} value */
+proto.inorbit.GpsFixMessage.prototype.setHasAccuracy = function(value) {
+  jspb.Message.setProto3BooleanField(this, 7, value);
+};
+
+
+/**
+ * optional float accuracy_meters = 8;
+ * @return {number}
+ */
+proto.inorbit.GpsFixMessage.prototype.getAccuracyMeters = function() {
+  return /** @type {number} */ (+jspb.Message.getFieldWithDefault(this, 8, 0.0));
+};
+
+
+/** @param {number} value */
+proto.inorbit.GpsFixMessage.prototype.setAccuracyMeters = function(value) {
+  jspb.Message.setProto3FloatField(this, 8, value);
+};
+
+
+/**
+ * optional string frame_id = 9;
+ * @return {string}
+ */
+proto.inorbit.GpsFixMessage.prototype.getFrameId = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+};
+
+
+/** @param {string} value */
+proto.inorbit.GpsFixMessage.prototype.setFrameId = function(value) {
+  jspb.Message.setProto3StringField(this, 9, value);
 };
 
 

@@ -300,7 +300,7 @@ class RobotSession {
     msg.setPosX(x);
     msg.setPosY(y);
     msg.setYaw(yaw);
-    // TODO(mike) report frameId when we start using it
+    msg.setFrameId(frameId);
     return this.publishProtobuf(MQTT_TOPIC_LOCALIZATION, msg);
   }
 

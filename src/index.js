@@ -22,6 +22,7 @@ const MQTT_TOPIC_LOCALIZATION = 'ros/loc/data2';
 const MQTT_TOPIC_ODOMETRY = 'ros/odometry/data';
 const MQTT_TOPIC_PATHS = 'ros/loc/path';
 const MQTT_TOPIC_ECHO = 'echo';
+const MQTT_IN_TOPIC = 'in_cmd';
 // built-in commands
 const MQTT_NAV_GOAL_GOAL = 'ros/loc/nav_goal';
 const MQTT_NAV_GOAL_MULTI = 'ros/loc/goal_path';
@@ -116,6 +117,7 @@ class RobotSession {
     this.subscribe(MQTT_INITIAL_POSE);
     this.subscribe(MQTT_NAV_GOAL_GOAL);
     this.subscribe(MQTT_CUSTOM_COMMAND);
+    this.subscribe(MQTT_IN_TOPIC);
 
     if (this.ended) {
       // In case this session was ended by end() while it was connecting

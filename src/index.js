@@ -11,7 +11,7 @@ import { isFunction } from 'lodash';
 import constants from './constants';
 import messages from './inorbit_pb';
 
-const EDGE_SDK_VERSION = '1.5.1';
+const EDGE_SDK_VERSION = '1.5.3';
 const INORBIT_ENDPOINT_DEFAULT = 'https://control.inorbit.ai/cloud_sdk_robot_config';
 // Agent version reported when a robot connection is open using this SDK
 const AGENT_VERSION = `${EDGE_SDK_VERSION}.edgesdk`;

@@ -172,6 +172,7 @@ class RobotSession {
    * Internal method: callback used on every reconnection to the broker.
    */
   #onReconnect = () => {
+    this.logger.info(`Setting robot ${this.robotId} state as online again.`);
     this.publish('state', `1|${this.robotApiKey}|${this.agentVersion}|${this.name}`, { qos: 1, retain: true });
   }
 

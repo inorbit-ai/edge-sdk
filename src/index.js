@@ -108,7 +108,7 @@ class RobotSession {
         payload: `0|${robotApiKey}`,
         qos: 1,
         retain: true
-      },
+      }
     });
     this.mqtt.on('message', this.#onMessage);
     this.mqtt.on('reconnect', this.#onReconnect);

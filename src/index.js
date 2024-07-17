@@ -11,7 +11,7 @@ import { isFunction } from 'lodash';
 import constants from './constants';
 import messages from './inorbit_pb';
 
-const EDGE_SDK_VERSION = '1.5.1';
+const EDGE_SDK_VERSION = '1.5.3';
 const INORBIT_ENDPOINT_DEFAULT = 'https://control.inorbit.ai/cloud_sdk_robot_config';
 // Agent version reported when a robot connection is open using this SDK
 const AGENT_VERSION = `${EDGE_SDK_VERSION}.edgesdk`;
@@ -108,9 +108,10 @@ class RobotSession {
         payload: `0|${robotApiKey}`,
         qos: 1,
         retain: true
-      }
+      },
     });
     this.mqtt.on('message', this.#onMessage);
+    this.mqtt.on('reconnect', this.#onReconnect);
 
     // Subscribe to incoming topics
     // TODO(adamantivm) Perform lazy subscription, only when callbacks are registered
@@ -165,6 +166,13 @@ class RobotSession {
     if (subtopic in this.#messageHandlers) {
       this.#messageHandlers[subtopic](message);
     }
+  }
+
+  /**
+   * Internal method: callback used on every reconnection to the broker.
+   */
+  #onReconnect = () => {
+    this.publish('state', `1|${this.robotApiKey}|${this.agentVersion}|${this.name}`, { qos: 1, retain: true });
   }
 
   /**

@@ -227,9 +227,16 @@ class RobotSession {
    */
   #dispatchCommand = (commandName, args, executionId) => {
     // TODO(adamantivm) try/catch block on each execution
-    this.commandCallbacks.forEach(c => {
+    this.commandCallbacks.forEach((c) => {
       // Prepare report result function bound to the specific execution ID
-      const resultFunction = (resultCode) => this.#reportCommandResult(args, executionId, resultCode);
+      const resultFunction = (
+        resultCode,
+        executionStatusDetails = undefined,
+        stdout = undefined,
+        stderr = undefined,
+      ) => this.#reportCommandResult(
+        args, executionId, resultCode, executionStatusDetails, stdout, stderr
+      );
       // TODO(adamantivm) Implement progress reporting function
       const progressFunction = () => { };
       // Call the callback method
@@ -241,7 +248,9 @@ class RobotSession {
    * Internal method: conveys to the server the reported result of a command executed by a
    * registered user callback
    */
-  #reportCommandResult = (args, executionId, resultCode) => {
+  #reportCommandResult = (
+    args, executionId, resultCode, executionStatusDetails, stdout, stderr
+  ) => {
     const msg = new messages.CustomScriptStatusMessage();
     msg.setFileName(args[0]);
     msg.setExecutionId(executionId);
@@ -249,6 +258,10 @@ class RobotSession {
       (resultCode === '0' ? constants.CUSTOM_COMMAND_STATUS_FINISHED : constants.CUSTOM_COMMAND_STATUS_ABORTED)
     );
     msg.setReturnCode(resultCode);
+    msg.setTs(Date.now());
+    if (executionStatusDetails) msg.setExecutionStatusDetails(executionStatusDetails);
+    if (stdout) msg.setStdout(stdout);
+    if (stderr) msg.setStderr(stderr);
     this.publishProtobuf(MQTT_SCRIPT_OUTPUT_TOPIC, msg);
   }
 
@@ -474,7 +487,7 @@ class RobotSessionFactory {
       robotId,
       name,
     },
-      this.robotSessionSettings);
+    this.robotSessionSettings);
   }
 }
 
